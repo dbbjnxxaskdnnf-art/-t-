@@ -681,17 +681,17 @@
             const questions = [];
             for (let card of cards) {
                 const q = card.querySelector('.teacher-q-prompt').value;
-                const opts = [card.querySelector('.teacher-opt-0').value||'A', card.querySelector('.teacher-opt-1').value||'B', card.querySelector('.teacher-opt-2').value||'C', card.querySelector('.teacher-opt-3').value||'D'];
+                const opts = [card.querySelector('.teacher-opt-0').value||'A', card.querySelector('.teacher-opt-1').value||'B', card.querySelector('.teacher-opt-2').value||'C', card.querySelector('.teacher-opt-3'].value||'D'];
                 const ans = parseInt(card.querySelector('.teacher-ans').value) || 0;
                 if (q) questions.push({ q, options: opts, answer: ans });
             }
             if (questions.length === 0) { window.showToast("1 сұрақ қосыңыз", true); return; }
             
-            const newQuiz = { id: 't_'+Date.now(), category: document.getElementById('teacher-quiz-cat').value, title, questions };
+            const newQuiz = { id: 't_'+Date.now(), category: document.getElementById('teacher-quiz-cat').value, title, questions, author: window.currentUserEmail || 'teacher' };
             firebaseTeacherQuizzes.unshift(newQuiz);
             try { localStorage.setItem('local_quizzes', JSON.stringify(firebaseTeacherQuizzes)); } catch(e){}
             
-            window.showToast("Тест сақталды және жарияланды!");
+            window.showToast("Тест сақталды және барлық оқушыларға көрінеді!");
             document.getElementById('teacher-quiz-title').value = ''; document.getElementById('teacher-questions-list').innerHTML = '';
             renderTopics(); window.switchRole('student');
         };
@@ -767,7 +767,6 @@
             window.timerInterval = setInterval(() => { window.timerSeconds--; updateDisplay(); if(window.timerSeconds <= 0){ clearInterval(window.timerInterval); window.finishQuiz(); }}, 1000);
         }
 
-        // --- TELEGRAM-ҒА НӘТИЖЕ ЖІБЕРЕТІН ФУНКЦИЯ ---
         function sendResultToTelegram(studentName, score, topic) {
             const botToken = '8992820131:AAHsMMIxOYxZwMnQRmY1JhIP7Lxb9S-nTt0';
             const chatId = '8270980852';
@@ -792,7 +791,6 @@
             
             try { localStorage.setItem('local_results', JSON.stringify(firebaseStudentResults)); } catch(e){}
 
-            // Telegram ботына нәтижені жіберу
             sendResultToTelegram(window.currentUserName, `${score}/${total} (${percent}%)`, window.currentQuiz.title);
             
             renderHistory(); renderStudentResults(); window.showToast("Нәтиже сақталды және Telegram-ға жіберілді!");
@@ -866,4 +864,3 @@
     </script>
 </body>
 </html>
-
