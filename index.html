@@ -681,7 +681,12 @@
             const questions = [];
             for (let card of cards) {
                 const q = card.querySelector('.teacher-q-prompt').value;
-                const opts = [card.querySelector('.teacher-opt-0').value||'A', card.querySelector('.teacher-opt-1').value||'B', card.querySelector('.teacher-opt-2').value||'C', card.querySelector('.teacher-opt-3'].value||'D'];
+                const opts = [
+                    card.querySelector('.teacher-opt-0').value || 'A', 
+                    card.querySelector('.teacher-opt-1').value || 'B', 
+                    card.querySelector('.teacher-opt-2').value || 'C', 
+                    card.querySelector('.teacher-opt-3').value || 'D'
+                ];
                 const ans = parseInt(card.querySelector('.teacher-ans').value) || 0;
                 if (q) questions.push({ q, options: opts, answer: ans });
             }
