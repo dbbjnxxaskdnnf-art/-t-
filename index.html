@@ -80,7 +80,6 @@
                 <i class="fa-solid fa-shield-halved text-indigo-500"></i> <span id="ui-teacher-panel-btn">Оқытушы</span>
             </button>
             
-            <!-- БАПТАУЛАР БАТЫРМАСЫ -->
             <button class="btn-header-pill cursor-pointer flex items-center justify-center w-9 h-9 p-0 rounded-full" onclick="switchView('settings')" title="Баптаулар">
                 <i class="fa-solid fa-gear text-slate-500 hover:text-indigo-600 transition"></i>
             </button>
@@ -94,7 +93,6 @@
 
     <main class="max-w-6xl mx-auto px-4 md:px-6 py-6 md:py-10 w-full flex-1">
 
-        <!-- 1. БАСТЫ БЕТ (TOPICS) -->
         <div id="view-topics">
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center mb-14">
                 <div class="lg:col-span-7">
@@ -129,7 +127,6 @@
                 </div>
             </div>
 
-            <!-- AI ГЕНЕРАТОР -->
             <div class="bg-white border border-indigo-100 rounded-3xl p-6 mb-12 shadow-sm flex flex-wrap items-center gap-4">
                 <div class="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-xl font-bold">✨</div>
                 <div class="flex-1 min-w-[200px]">
@@ -164,14 +161,12 @@
             </div>
         </div>
 
-        <!-- 2. ЖАҢА: БАПТАУЛАР БӨЛІМІ (SETTINGS) -->
         <div id="view-settings" class="hidden max-w-3xl mx-auto space-y-6">
             <div class="flex items-center gap-3 mb-8">
                 <button class="w-10 h-10 rounded-full bg-slate-200 hover:bg-slate-300 flex items-center justify-center text-slate-700 transition" onclick="switchView('topics')"><i class="fa-solid fa-arrow-left"></i></button>
                 <h2 class="serif-heading text-3xl font-bold text-slate-900" id="ui-set-title">Платформа Баптаулары</h2>
             </div>
             
-            <!-- Жүйе тілі -->
             <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100">
                 <h3 class="font-bold text-slate-900 text-lg flex items-center gap-2 mb-4" id="ui-set-lang-title">
                     <i class="fa-solid fa-globe text-blue-500"></i> Жүйе тілі
@@ -184,7 +179,6 @@
                 </div>
             </div>
 
-            <!-- Дизайн (Theme) -->
             <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 flex items-center justify-between">
                 <div>
                     <h3 class="font-bold text-slate-900 text-lg flex items-center gap-2" id="ui-set-theme-title"><i class="fa-solid fa-moon text-indigo-500"></i> Түнгі режим (Dark Mode)</h3>
@@ -196,7 +190,6 @@
                 </div>
             </div>
 
-            <!-- Тест уақыты -->
             <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100">
                 <h3 class="font-bold text-slate-900 text-lg flex items-center gap-2 mb-4" id="ui-set-time-title"><i class="fa-solid fa-stopwatch text-amber-500"></i> Тест уақытын реттеу</h3>
                 <p class="text-sm text-slate-500 mb-4" id="ui-set-time-desc">Әр тестке берілетін стандартты уақытты таңдаңыз:</p>
@@ -207,7 +200,6 @@
                 </div>
             </div>
 
-            <!-- API Кілттер -->
             <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100">
                 <h3 class="font-bold text-slate-900 text-lg flex items-center gap-2 mb-2" id="ui-set-api-title"><i class="fa-solid fa-key text-emerald-500"></i> Жүйелік API кілттері (Мұғалімге)</h3>
                 <p class="text-sm text-slate-500 mb-4" id="ui-set-api-desc">Кодты ашпай-ақ, AI жұмыс істеуі үшін Gemini кілтін осы жерге сақтаңыз.</p>
@@ -218,7 +210,6 @@
                 </div>
             </div>
             
-            <!-- Деректерді тазалау -->
             <div class="bg-rose-50 p-6 rounded-3xl border border-rose-100 flex items-center justify-between">
                 <div>
                     <h3 class="font-bold text-rose-900 text-lg" id="ui-set-del-title">Деректерді тазалау</h3>
@@ -228,7 +219,6 @@
             </div>
         </div>
 
-        <!-- 3. ТЕСТ ӨТУ БЕТІ (QUIZ) -->
         <div id="view-quiz" class="hidden grid grid-cols-1 lg:grid-cols-4 gap-6">
             <div class="lg:col-span-3 quiz-card-box p-6 md:p-8 relative">
                 <div class="w-full bg-slate-200 h-2.5 rounded-full mb-6 overflow-hidden">
@@ -261,7 +251,6 @@
             </div>
         </div>
 
-        <!-- 4. ОҚЫТУШЫ ПАНЕЛІ (TEACHER) -->
         <div id="view-teacher" class="hidden space-y-8">
             <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-200 pb-4">
                 <div>
@@ -329,7 +318,6 @@
             </div>
         </div>
 
-        <!-- 5. НӘТИЖЕ (RESULTS) -->
         <div id="view-results" class="hidden max-w-3xl mx-auto quiz-card-box p-8 text-center">
             <h1 class="serif-heading text-3xl font-extrabold text-slate-900 mb-2" id="ui-result-title">Тест Нәтижесі</h1>
             <p class="text-slate-500 text-sm mb-8" id="result-topic-title">Тақырып</p>
@@ -345,7 +333,6 @@
         </div>
     </main>
 
-    <!-- МОДАЛДАР (Тіркелу, PIN, QR) -->
     <div id="ai-loading-overlay" class="fixed inset-0 bg-black/50 backdrop-blur-md z-50 hidden flex-col items-center justify-center p-4 text-white">
         <div class="w-16 h-16 rounded-full bg-indigo-600 flex items-center justify-center text-2xl shadow-2xl animate-bounce mb-4">✨</div>
         <h3 class="serif-heading text-2xl font-bold mb-2" id="ui-loader-title">AI талдап жатыр...</h3>
@@ -384,13 +371,11 @@
         </div>
     </div>
 
-    <!-- ТОАСТ ХАБАРЛАМАЛАР -->
     <div id="toast" class="fixed top-5 right-5 z-50 transform -translate-y-20 opacity-0 transition-all duration-300 bg-slate-900 text-white text-sm font-semibold px-5 py-3 rounded-2xl shadow-xl flex items-center gap-2 pointer-events-none">
         <i class="fa-solid fa-circle-check text-emerald-400" id="toast-icon"></i><span id="toast-message">Хабарлама</span>
     </div>
 
     <script type="module">
-        // БАЗАЛЫҚ АЙНЫМАЛЫЛАР ЖӘНЕ БАПТАУЛАР
         window.currentLang = 'kk';
         window.currentRole = 'student';
         window.currentUserName = ''; window.currentUserEmail = '';
@@ -405,7 +390,6 @@
         let firebaseTeacherQuizzes = [];
         let firebaseStudentResults = [];
 
-        // АУДАРМАЛАР
         const TRANSLATIONS = {
             kk: { 
                 login: "Тіркелу", logout: "Шығу", teacherPanel: "Оқытушы", heroTag: "Жанға арналған азық", 
@@ -468,7 +452,6 @@
             }
         };
 
-        // БАПТАУЛАРДЫ ЖҮКТЕУ (LocalStorage)
         try {
             const savedSettings = JSON.parse(localStorage.getItem('quizly_settings'));
             if(savedSettings) {
@@ -480,7 +463,6 @@
             window.currentUserEmail = localStorage.getItem('quizly_user_email') || '';
             window.isLoggedIn = !!window.currentUserName;
             
-            // Интерфейске баптауларды қолдану
             if(window.appSettings.theme === 'dark') {
                 document.body.classList.add('dark-mode');
                 document.getElementById('theme-toggle').checked = true;
@@ -501,7 +483,6 @@
             };
         });
 
-        // UI & FUNCTIONS
         window.showToast = function(msg, isError = false) {
             const toast = document.getElementById('toast');
             document.getElementById('toast-message').textContent = msg;
@@ -513,7 +494,6 @@
         window.changeLanguage = function(lang) {
             window.currentLang = lang;
             
-            // Баптаулардағы тіл батырмаларының дизайнын жаңарту
             document.querySelectorAll('.lang-btn').forEach(btn => {
                 btn.classList.remove('bg-indigo-600', 'text-white');
                 btn.classList.add('bg-white', 'text-slate-700', 'dark:bg-[#1e1e1e]', 'dark:text-slate-300');
@@ -547,7 +527,6 @@
             setTxt('ui-loader-title', t.loaderTitle); setTxt('ui-auth-title', t.authTitle); setTxt('ui-auth-submit', t.authSubm); 
             setTxt('ui-pin-title', t.pinTitle); setTxt('ui-pin-submit', t.pinSubm); setTxt('ui-qr-title', t.qrTitle);
             
-            // Баптаулар бөлімі аудармалары
             setTxt('ui-set-lang-title', `<i class="fa-solid fa-globe text-blue-500"></i> ${t.setLangTitle}`);
             setTxt('ui-set-lang-desc', t.setLangDesc);
             setTxt('ui-set-theme-title', `<i class="fa-solid fa-moon text-indigo-500"></i> ${t.setThemeTitle}`);
@@ -567,7 +546,6 @@
             renderTopics();
         };
 
-        // БАПТАУЛАР (SETTINGS) ФУНКЦИЯЛАРЫ
         window.toggleTheme = function() {
             const isDark = document.getElementById('theme-toggle').checked;
             if(isDark) {
@@ -594,7 +572,6 @@
             saveSettings();
             window.showToast(`${seconds / 60} минуттық уақыт орнатылды!`);
         };
-        // Бастапқы уақыт батырмасын белгілеу
         setTimeout(() => window.setTimer(window.appSettings.defaultTimer), 100);
 
         window.saveApiKey = function() {
@@ -621,7 +598,6 @@
             try { localStorage.setItem('quizly_settings', JSON.stringify(window.appSettings)); } catch(e){}
         }
 
-        // NAVIGATION
         window.switchView = function(viewName) {
             ['topics', 'quiz', 'teacher', 'results', 'settings'].forEach(v => {
                 const el = document.getElementById(`view-${v}`);
@@ -637,7 +613,6 @@
             } else { window.switchView('topics'); }
         };
 
-        // ТІРКЕЛУ ЖӘНЕ КІРУ
         window.openAuthModal = () => document.getElementById('auth-modal').classList.remove('hidden');
         window.closeAuthModal = () => document.getElementById('auth-modal').classList.add('hidden');
         window.handleAuthSubmit = function(e) {
@@ -657,7 +632,6 @@
             window.switchRole('student'); window.showToast('Жүйеден шықтыңыз');
         };
 
-        // МҰҒАЛІМ ПАНЕЛІ
         window.promptTeacherAccess = () => document.getElementById('teacher-pin-modal').classList.remove('hidden');
         window.closeTeacherPinModal = () => document.getElementById('teacher-pin-modal').classList.add('hidden');
         window.verifyTeacherPin = function() {
@@ -722,7 +696,6 @@
             renderTopics(); window.switchRole('student');
         };
 
-        // ТАҚЫРЫПТАРДЫ (TOPICS) ШЫҒАРУ
         let currentFilter = 'all';
         window.filterTopics = function(cat, ev) {
             currentFilter = cat;
@@ -755,7 +728,6 @@
             firebaseTeacherQuizzes.forEach(t => renderCard(t, true));
         }
 
-        // ТЕСТТІ ӨТУ ПРОЦЕСІ
         window.currentQuiz = null; window.currentQuestionIdx = 0; window.userAnswers = [];
         function startQuiz(quizObj) {
             if (!window.isLoggedIn) { window.openAuthModal(); return; }
@@ -795,6 +767,15 @@
             window.timerInterval = setInterval(() => { window.timerSeconds--; updateDisplay(); if(window.timerSeconds <= 0){ clearInterval(window.timerInterval); window.finishQuiz(); }}, 1000);
         }
 
+        // --- TELEGRAM-ҒА НӘТИЖЕ ЖІБЕРЕТІН ФУНКЦИЯ ---
+        function sendResultToTelegram(studentName, score, topic) {
+            const botToken = '8992820131:AAHsMMIxOYxZwMnQRmY1JhIP7Lxb9S-nTt0';
+            const chatId = '8270980852';
+            const text = `📚 Жаңа нәтиже!\n🧑‍🎓 Оқушы: ${studentName}\n📝 Тақырып: ${topic}\n📊 Нәтиже: ${score}`;
+            const url = `https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(text)}`;
+            fetch(url).catch(error => console.error("Қате:", error));
+        }
+
         window.finishQuiz = function() {
             clearInterval(window.timerInterval); window.switchView('results');
             let score = 0;
@@ -810,8 +791,11 @@
             firebaseStudentResults.unshift(rec);
             
             try { localStorage.setItem('local_results', JSON.stringify(firebaseStudentResults)); } catch(e){}
+
+            // Telegram ботына нәтижені жіберу
+            sendResultToTelegram(window.currentUserName, `${score}/${total} (${percent}%)`, window.currentQuiz.title);
             
-            renderHistory(); renderStudentResults(); window.showToast("Нәтиже сақталды!");
+            renderHistory(); renderStudentResults(); window.showToast("Нәтиже сақталды және Telegram-ға жіберілді!");
         };
 
         function renderHistory() {
@@ -838,7 +822,6 @@
             `).join('');
         }
         
-        // ОҚЫТУШЫ AI ФУНКЦИЯСЫ (GEMINI API)
         window.generateTeacherQuizWithAI = async function() {
             const topic = document.getElementById('teacher-ai-topic').value.trim();
             if(!window.appSettings.apiKey) { window.showToast("Баптауларға кіріп Gemini API кілтін енгізіңіз!", true); return; }
@@ -883,3 +866,4 @@
     </script>
 </body>
 </html>
+
