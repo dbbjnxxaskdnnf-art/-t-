@@ -43,7 +43,7 @@
         body.dark-mode { background: #121212; color: #e5e7eb; }
         body.dark-mode header { background: rgba(18,18,18,0.95); border-bottom: 1px solid #333; }
         body.dark-mode .brand-logo, body.dark-mode .serif-heading { color: #f3f4f6 !important; }
-        body.dark-mode .bg-white, body.dark-mode .topic-card, body.dark-mode .quiz-card-box { background: #1e1e1e !important; border-color: #333 !important; }
+        body.dark-mode .bg-white:not(#auth-google-btn), body.dark-mode .topic-card, body.dark-mode .quiz-card-box { background: #1e1e1e !important; border-color: #333 !important; }
         body.dark-mode .text-slate-900, body.dark-mode .text-slate-800 { color: #f3f4f6 !important; }
         body.dark-mode .text-slate-700, body.dark-mode .text-slate-600 { color: #d1d5db !important; }
         body.dark-mode .text-slate-500, body.dark-mode .text-slate-400 { color: #9ca3af !important; }
@@ -88,7 +88,6 @@
     </header>
 
     <main class="max-w-6xl mx-auto px-4 md:px-6 py-6 md:py-10 w-full flex-1">
-
         <div id="view-topics">
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center mb-14">
                 <div class="lg:col-span-7">
@@ -147,7 +146,6 @@
                 </div>
             </div>
 
-            <!-- Мұнда барлық тесттер жүктеледі, соның ішінде мұғалім қосатындары да -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12" id="topics-grid"></div>
 
             <div class="mt-8 bg-white/70 border border-slate-200/80 rounded-3xl p-6">
@@ -330,34 +328,46 @@
         </div>
     </main>
 
-    <!-- APPLE / GOOGLE / ТІРКЕЛУ ЭКРАНЫ -->
+    <!-- APPLE / GOOGLE ОРИГИНАЛ БАТЫРМАЛАРЫМЕН ТІРКЕЛУ ЭКРАНЫ -->
     <div id="auth-modal" class="fixed inset-0 bg-black/60 backdrop-blur-md z-50 flex items-center justify-center p-4">
         <div class="bg-white dark:bg-[#1e1e1e] rounded-3xl p-6 md:p-8 max-w-sm w-full shadow-2xl relative text-center">
             <div class="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-xl font-bold mx-auto mb-3"><i class="fa-solid fa-sparkles"></i></div>
-            <h3 class="serif-heading text-2xl font-bold text-slate-900 mb-2">Қош келдіңіз!</h3>
-            <p class="text-xs text-slate-500 mb-6">Тест тапсыру үшін жалғастырыңыз</p>
+            
+            <h3 class="serif-heading text-2xl font-bold text-slate-900 dark:text-white mb-2">Қош келдіңіз!</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mb-6">Тест тапсыру үшін жалғастырыңыз</p>
             
             <div class="space-y-3">
-                <button onclick="socialLogin('Apple')" class="w-full bg-black text-white font-bold py-3.5 px-4 rounded-2xl flex items-center justify-center gap-3 shadow-md hover:bg-slate-900 transition cursor-pointer">
-                    <i class="fa-brands fa-apple text-lg"></i> Продолжить с Apple
+                <button onclick="socialLogin('apple')" class="w-full bg-black text-white font-semibold py-3 px-4 rounded-xl flex items-center justify-center gap-3 shadow-md hover:bg-slate-900 transition cursor-pointer">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" class="w-5 h-5" fill="currentColor">
+                        <path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/>
+                    </svg>
+                    <span>Продолжить с Apple</span>
                 </button>
-                <button onclick="socialLogin('Google')" class="w-full bg-white border border-slate-200 text-slate-800 font-bold py-3.5 px-4 rounded-2xl flex items-center justify-center gap-3 shadow-md hover:bg-slate-50 transition cursor-pointer">
-                    <i class="fa-brands fa-google text-red-500 text-lg"></i> Продолжить через Google
+                
+                <button onclick="socialLogin('google')" id="auth-google-btn" class="w-full bg-white border border-slate-300 text-[#3c4043] font-semibold py-3 px-4 rounded-xl flex items-center justify-center gap-3 shadow-sm hover:bg-slate-50 transition cursor-pointer dark:bg-white dark:text-[#3c4043]">
+                    <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" class="w-5 h-5">
+                        <g><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"></path><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"></path><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"></path><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"></path><path fill="none" d="M0 0h48v48H0z"></path></g>
+                    </svg>
+                    <span>Продолжить через Google</span>
                 </button>
+                
                 <div class="relative flex py-2 items-center">
-                    <div class="flex-grow border-t border-slate-200"></div>
+                    <div class="flex-grow border-t border-slate-200 dark:border-slate-600"></div>
                     <span class="flex-shrink mx-4 text-slate-400 text-xs uppercase">немесе пошта арқылы</span>
-                    <div class="flex-grow border-t border-slate-200"></div>
+                    <div class="flex-grow border-t border-slate-200 dark:border-slate-600"></div>
                 </div>
+                <!-- ДОБАВЛЕНО ПОЛЕ ДЛЯ ПАРОЛЯ -->
                 <form onsubmit="handleAuthSubmit(event)" class="space-y-3 text-left">
-                    <input type="text" id="auth-name-input" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm focus:outline-none" placeholder="Аты-жөніңіз">
-                    <input type="email" id="auth-email-input" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm focus:outline-none" placeholder="Электрондық пошта">
+                    <input type="text" id="auth-name-input" required class="w-full bg-slate-50 dark:bg-[#2d2d2d] dark:border-slate-600 dark:text-white border border-slate-200 rounded-xl p-3 text-sm focus:outline-none" placeholder="Аты-жөніңіз">
+                    <input type="email" id="auth-email-input" required class="w-full bg-slate-50 dark:bg-[#2d2d2d] dark:border-slate-600 dark:text-white border border-slate-200 rounded-xl p-3 text-sm focus:outline-none" placeholder="Электрондық пошта">
+                    <input type="password" id="auth-pass-input" required class="w-full bg-slate-50 dark:bg-[#2d2d2d] dark:border-slate-600 dark:text-white border border-slate-200 rounded-xl p-3 text-sm focus:outline-none" placeholder="Құпия сөз (Кемі 6 таңба)">
                     <button type="submit" class="w-full btn-indigo py-3 text-sm shadow-md text-center cursor-pointer">Тіркелу</button>
                 </form>
             </div>
         </div>
     </div>
 
+    <!-- ТЕ ЖЕ САМЫЕ МОДАЛЬНЫЕ ОКНА ДЛЯ ПИН-КОДА И QR -->
     <div id="teacher-pin-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white rounded-3xl p-6 md:p-8 max-w-sm w-full shadow-2xl relative text-center">
             <button class="absolute top-4 right-4 text-slate-400 text-lg cursor-pointer" onclick="closeTeacherPinModal()"><i class="fa-solid fa-xmark"></i></button>
@@ -367,7 +377,6 @@
             <button type="button" onclick="verifyTeacherPin()" class="w-full btn-indigo py-3 text-sm shadow-md" id="ui-pin-submit">Кіру</button>
         </div>
     </div>
-
     <div id="qr-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white rounded-3xl p-6 md:p-8 max-w-sm w-full shadow-2xl relative text-center">
             <button class="absolute top-4 right-4 text-slate-400 text-lg cursor-pointer" onclick="closeQrModal()"><i class="fa-solid fa-xmark"></i></button>
@@ -378,98 +387,100 @@
             <p class="text-xs text-indigo-600 font-bold break-all" id="current-url-text"></p>
         </div>
     </div>
-
     <div id="ai-loading-overlay" class="fixed inset-0 bg-black/50 backdrop-blur-md z-50 hidden flex-col items-center justify-center p-4 text-white">
         <div class="w-16 h-16 rounded-full bg-indigo-600 flex items-center justify-center text-2xl shadow-2xl animate-bounce mb-4">✨</div>
         <h3 class="serif-heading text-2xl font-bold mb-2" id="ui-loader-title">AI талдап жатыр...</h3>
     </div>
-
     <div id="toast" class="fixed top-5 right-5 z-50 transform -translate-y-20 opacity-0 transition-all duration-300 bg-slate-900 text-white text-sm font-semibold px-5 py-3 rounded-2xl shadow-xl flex items-center gap-2 pointer-events-none">
         <i class="fa-solid fa-circle-check text-emerald-400" id="toast-icon"></i><span id="toast-message">Хабарлама</span>
     </div>
 
+    <!-- ИЗМЕНЕННЫЙ БЛОК СКРИПТОВ С ПОДКЛЮЧЕНИЕМ SUPABASE -->
     <script type="module">
+        // 1. ИМПОРТ SUPABASE напрямую из CDN
+        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+
+        // 2. ВАШИ КЛЮЧИ (Секретный ключ сюда НЕ вставляем!)
+        const SUPABASE_URL = 'https://tobsozpdoyvgjfmxswnn.supabase.co';
+        
+        /* Примечание: Стандартный публичный ключ Supabase обычно начинается с "eyJ...". 
+           Если текущий ключ вызовет ошибку, зайдите в Supabase -> Project Settings -> API и скопируйте ключ "anon public". */
+        const SUPABASE_ANON_KEY = 'sb_publishable_BdR3JYk1dSG-i7T29wxxYQ_KmftNhbF';
+        
+        const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
         window.currentLang = 'kk';
         window.currentRole = 'student';
         window.currentUserName = ''; window.currentUserEmail = '';
         window.isLoggedIn = false;
-        
-        window.appSettings = {
-            theme: 'light',
-            defaultTimer: 600,
-            apiKey: ''
-        };
+        window.appSettings = { theme: 'light', defaultTimer: 600, apiKey: '' };
 
+        // Сохранение тестов оставил через JSONBin, как было настроено ранее
         let firebaseTeacherQuizzes = [];
         let firebaseStudentResults = [];
-
-        // БҰЛ ЖЕРДЕ ЖАҢАРТЫЛДЫ! БАЗА КІЛТТЕРІ ҚОСЫЛДЫ.
         const JSONBIN_BIN_ID = '670a5c43acd3cb34a8966779'; 
         const JSONBIN_API_KEY = '$2a$10$eE5r0Q1oXlP21XoH32N.H.gUoX0Z49XqO4xZ/4yGz6T7mQ5m9YnRy'; 
-
+        
+        // ... (Блок переводов TRANSLATIONS остается без изменений, скрыл для краткости) ...
         const TRANSLATIONS = {
-            kk: { 
-                login: "Тіркелу", logout: "Шығу", teacherPanel: "Оқытушы", heroTag: "Жанға арналған азық", 
-                title1: "Қызық болыңыз.", title2: "Біраз ойнап көріңіз.", subtitle: "30 түрлі санаттағы мықты тесттер жиынтығы.", 
-                startBtn: "Бастау", genBtn: "Жасау", aiTitle: "AI Тақырып Генераторы", aiDesc: "Тақырыпты енгізіңіз, AI сұрақтар құрастырады", 
-                moodLbl: "САНАТТАР", sectionTitle: "Барлық викториналар", fAll: "Барлық тесттер", fScience: "Ғылым & Технология", 
-                fCulture: "Мәдениет & Өнер", fHistory: "Тарих", fProg: "IT & Бағдарламалау", historyTitle: "Өткен тесттер тарихы", 
-                hintBtn: "AI Көмек", backLbl: "Артқа", nextLbl: "Келесі", finishLbl: "Аяқтау", qListTitle: "Сұрақтар тізімі", 
-                resTitle: "Тест Нәтижесі", resHome: "Басқа тақырып", resRestart: "Қайта тапсыру", teacherLabel: "ОҚЫТУШЫ ПАНЕЛІ", 
-                teacherMaintitle: "Тесттер мен нәтижелер", btnCreateTab: "Тест жасау", btnResTab: "Нәтижелер", btnQrTab: "QR Көрсету", 
-                btnRetStud: "Оқушыға қайту", createTitle: "Өз тестіңізді жасаңыз", aiTeachTitle: "AI көмегімен жасау", 
-                lblTestName: "Тест атауы", lblTestCat: "Санат", btnAddQ: "Сұрақ қосу", btnPublish: "Сақтау & Жариялау", 
-                resTitle2: "Оқушы нәтижелері", thName: "Аты / Поштасы", thTopic: "Тест Тақырыбы", thDate: "Күні", thScore: "Нәтиже", 
-                loaderTitle: "AI талдап жатыр...", authTitle: "Тіркеліңіз", authSubm: "Сақтау & Бастау", pinTitle: "Оқытушы PIN коды", 
-                pinSubm: "Кіру", qrTitle: "Оқушыларға арналған QR Код", setLangTitle: "Жүйе тілі", setLangDesc: "Платформаның негізгі интерфейс тілін таңдаңыз:",
-                setThemeTitle: "Түнгі режим (Dark Mode)", setThemeDesc: "Көзді шаршатпау үшін қараңғы интерфейсті қосыңыз.", 
-                setTimeTitle: "Тест уақытын реттеу", setTimeDesc: "Әр тестке берілетін стандартты уақытты таңдаңыз:", 
-                setApiTitle: "Жүйелік API кілттері (Мұғалімге)", setApiDesc: "Кодты ашпай-ақ, AI жұмыс істеуі үшін Gemini кілтін осы жерге сақтаңыз.",
-                setDelTitle: "Деректерді тазалау", setDelDesc: "Осы браузердегі барлық сақталған тесттер мен нәтижелерді жою.", btnSaveKey: "Сақтау", btnDel: "Толық өшіру",
-                aiGenBtn: "AI Жасау"
-            },
-            ru: { 
-                login: "Войти", logout: "Выйти", teacherPanel: "Учитель", heroTag: "Пища для ума", title1: "Будьте любопытны.", 
-                title2: "Поиграйте со знаниями.", subtitle: "Коллекция из 30 крутых тестов разных категорий.", startBtn: "Начать", 
-                genBtn: "Создать", aiTitle: "ИИ Генератор", aiDesc: "Введите тему, ИИ составит вопросы", moodLbl: "КАТЕГОРИИ", 
-                sectionTitle: "30 викторин", fAll: "Все тесты", fScience: "Наука", fCulture: "Культура", fHistory: "История", 
-                fProg: "IT", historyTitle: "История тестов", hintBtn: "ИИ Подсказка", backLbl: "Назад", nextLbl: "Далее", 
-                finishLbl: "Завершить", qListTitle: "Список вопросов", resTitle: "Результат", resHome: "Другая тема", 
-                resRestart: "Пройти снова", teacherLabel: "ПАНЕЛЬ УЧИТЕЛЯ", teacherMaintitle: "Тесты и результаты", 
-                btnCreateTab: "Создать тест", btnResTab: "Результаты", btnQrTab: "Показать QR", btnRetStud: "Назад к ученику", 
-                createTitle: "Создайте свой тест", aiTeachTitle: "Создание с ИИ", lblTestName: "Название теста", lblTestCat: "Категория", 
-                btnAddQ: "Добавить вопрос", btnPublish: "Сохранить и опубликовать", resTitle2: "Результаты учеников", 
-                thName: "Имя / Почта", thTopic: "Тема Теста", thDate: "Дата", thScore: "Счет", loaderTitle: "ИИ анализирует...", 
-                authTitle: "Регистрация", authSubm: "Сохранить и Начать", pinTitle: "PIN код Учителя", pinSubm: "Войти", 
-                qrTitle: "QR Код для Учеников", setLangTitle: "Язык системы", setLangDesc: "Выберите основной язык интерфейса:",
-                setThemeTitle: "Ночной режим (Dark Mode)", setThemeDesc: "Включите темный интерфейс для снижения нагрузки на глаза.", 
-                setTimeTitle: "Настройка времени", setTimeDesc: "Выберите стандартное время на каждый тест:", 
-                setApiTitle: "Системные API ключи (Учитель)", setApiDesc: "Сохраните ключ Gemini здесь для работы ИИ.",
-                setDelTitle: "Очистка данных", setDelDesc: "Удалить все сохраненные тесты и результаты в этом браузере.", btnSaveKey: "Сохранить", btnDel: "Полностью удалить",
-                aiGenBtn: "Создать с ИИ"
-            },
-            en: { 
-                login: "Sign In", logout: "Logout", teacherPanel: "Teacher", heroTag: "Food for thought", title1: "Stay curious.", 
-                title2: "Play with knowledge.", subtitle: "A collection of 30 great quizzes.", startBtn: "Start", 
-                genBtn: "Generate", aiTitle: "AI Generator", aiDesc: "Enter topic, AI will create questions", moodLbl: "CATEGORIES", 
-                sectionTitle: "30 Quizzes", fAll: "All quizzes", fScience: "Science", fCulture: "Culture", fHistory: "History", 
-                fProg: "IT", historyTitle: "Quiz History", hintBtn: "AI Hint", backLbl: "Back", nextLbl: "Next", 
-                finishLbl: "Finish", qListTitle: "Questions List", resTitle: "Quiz Result", resHome: "Other topic", 
-                resRestart: "Retry", teacherLabel: "TEACHER PANEL", teacherMaintitle: "Quizzes & Results", btnCreateTab: "Create Quiz", 
-                btnResTab: "Results", btnQrTab: "Show QR", btnRetStud: "Back to Student", createTitle: "Create Your Quiz", 
-                aiTeachTitle: "Create with AI", lblTestName: "Quiz Title", lblTestCat: "Category", btnAddQ: "Add Question", 
-                btnPublish: "Save & Publish", resTitle2: "Student Results", thName: "Name / Email", thTopic: "Quiz Topic", 
-                thDate: "Date", thScore: "Score", loaderTitle: "AI is analyzing...", authTitle: "Register", authSubm: "Save & Start", 
-                pinTitle: "Teacher PIN", pinSubm: "Enter", qrTitle: "QR Code for Students", setLangTitle: "System Language", 
-                setLangDesc: "Choose the main interface language:", setThemeTitle: "Dark Mode", setThemeDesc: "Enable dark interface to reduce eye strain.", 
-                setTimeTitle: "Adjust Timer", setTimeDesc: "Select the standard time for each quiz:", 
-                setApiTitle: "System API Keys (Teacher)", setApiDesc: "Save the Gemini key here to enable AI features.",
-                setDelTitle: "Clear Data", setDelDesc: "Delete all saved quizzes and results in this browser.", btnSaveKey: "Save", btnDel: "Delete All",
-                aiGenBtn: "Generate AI"
+            kk: { login: "Тіркелу", logout: "Шығу", teacherPanel: "Оқытушы", heroTag: "Жанға арналған азық", title1: "Қызық болыңыз.", title2: "Біраз ойнап көріңіз.", subtitle: "30 түрлі санаттағы мықты тесттер жиынтығы.", startBtn: "Бастау", genBtn: "Жасау", aiTitle: "AI Тақырып Генераторы", aiDesc: "Тақырыпты енгізіңіз, AI сұрақтар құрастырады", moodLbl: "САНАТТАР", sectionTitle: "Барлық викториналар", fAll: "Барлық тесттер", fScience: "Ғылым & Технология", fCulture: "Мәдениет & Өнер", fHistory: "Тарих", fProg: "IT & Бағдарламалау", historyTitle: "Өткен тесттер тарихы", hintBtn: "AI Көмек", backLbl: "Артқа", nextLbl: "Келесі", finishLbl: "Аяқтау", qListTitle: "Сұрақтар тізімі", resTitle: "Тест Нәтижесі", resHome: "Басқа тақырып", resRestart: "Қайта тапсыру", teacherLabel: "ОҚЫТУШЫ ПАНЕЛІ", teacherMaintitle: "Тесттер мен нәтижелер", btnCreateTab: "Тест жасау", btnResTab: "Нәтижелер", btnQrTab: "QR Көрсету", btnRetStud: "Оқушыға қайту", createTitle: "Өз тестіңізді жасаңыз", aiTeachTitle: "AI көмегімен жасау", lblTestName: "Тест атауы", lblTestCat: "Санат", btnAddQ: "Сұрақ қосу", btnPublish: "Сақтау & Жариялау", resTitle2: "Оқушы нәтижелері", thName: "Аты / Поштасы", thTopic: "Тест Тақырыбы", thDate: "Күні", thScore: "Нәтиже", loaderTitle: "AI талдап жатыр...", authTitle: "Тіркеліңіз", authSubm: "Сақтау & Бастау", pinTitle: "Оқытушы PIN коды", pinSubm: "Кіру", qrTitle: "Оқушыларға арналған QR Код", setLangTitle: "Жүйе тілі", setLangDesc: "Платформаның негізгі интерфейс тілін таңдаңыз:", setThemeTitle: "Түнгі режим (Dark Mode)", setThemeDesc: "Көзді шаршатпау үшін қараңғы интерфейсті қосыңыз.", setTimeTitle: "Тест уақытын реттеу", setTimeDesc: "Әр тестке берілетін стандартты уақытты таңдаңыз:", setApiTitle: "Жүйелік API кілттері (Мұғалімге)", setApiDesc: "Кодты ашпай-ақ, AI жұмыс істеуі үшін Gemini кілтін осы жерге сақтаңыз.", setDelTitle: "Деректерді тазалау", setDelDesc: "Осы браузердегі барлық сақталған тесттер мен нәтижелерді жою.", btnSaveKey: "Сақтау", btnDel: "Толық өшіру", aiGenBtn: "AI Жасау" },
+            ru: { login: "Войти", logout: "Выйти", teacherPanel: "Учитель", heroTag: "Пища для ума", title1: "Будьте любопытны.", title2: "Поиграйте со знаниями.", subtitle: "Коллекция из 30 крутых тестов разных категорий.", startBtn: "Начать", genBtn: "Создать", aiTitle: "ИИ Генератор", aiDesc: "Введите тему, ИИ составит вопросы", moodLbl: "КАТЕГОРИИ", sectionTitle: "30 викторин", fAll: "Все тесты", fScience: "Наука", fCulture: "Культура", fHistory: "История", fProg: "IT", historyTitle: "История тестов", hintBtn: "ИИ Подсказка", backLbl: "Назад", nextLbl: "Далее", finishLbl: "Завершить", qListTitle: "Список вопросов", resTitle: "Результат", resHome: "Другая тема", resRestart: "Пройти снова", teacherLabel: "ПАНЕЛЬ УЧИТЕЛЯ", teacherMaintitle: "Тесты и результаты", btnCreateTab: "Создать тест", btnResTab: "Результаты", btnQrTab: "Показать QR", btnRetStud: "Назад к ученику", createTitle: "Создайте свой тест", aiTeachTitle: "Создание с ИИ", lblTestName: "Название теста", lblTestCat: "Категория", btnAddQ: "Добавить вопрос", btnPublish: "Сохранить и опубликовать", resTitle2: "Результаты учеников", thName: "Имя / Почта", thTopic: "Тема Теста", thDate: "Дата", thScore: "Счет", loaderTitle: "ИИ анализирует...", authTitle: "Регистрация", authSubm: "Сохранить и Начать", pinTitle: "PIN код Учителя", pinSubm: "Войти", qrTitle: "QR Код для Учеников", setLangTitle: "Язык системы", setLangDesc: "Выберите основной язык интерфейса:", setThemeTitle: "Ночной режим (Dark Mode)", setThemeDesc: "Включите темный интерфейс для снижения нагрузки на глаза.", setTimeTitle: "Настройка времени", setTimeDesc: "Выберите стандартное время на каждый тест:", setApiTitle: "Системные API ключи (Учитель)", setApiDesc: "Сохраните ключ Gemini здесь для работы ИИ.", setDelTitle: "Очистка данных", setDelDesc: "Удалить все сохраненные тесты и результаты в этом браузере.", btnSaveKey: "Сохранить", btnDel: "Полностью удалить", aiGenBtn: "Создать с ИИ" },
+            en: { login: "Sign In", logout: "Logout", teacherPanel: "Teacher", heroTag: "Food for thought", title1: "Stay curious.", title2: "Play with knowledge.", subtitle: "A collection of 30 great quizzes.", startBtn: "Start", genBtn: "Generate", aiTitle: "AI Generator", aiDesc: "Enter topic, AI will create questions", moodLbl: "CATEGORIES", sectionTitle: "30 Quizzes", fAll: "All quizzes", fScience: "Science", fCulture: "Culture", fHistory: "History", fProg: "IT", historyTitle: "Quiz History", hintBtn: "AI Hint", backLbl: "Back", nextLbl: "Next", finishLbl: "Finish", qListTitle: "Questions List", resTitle: "Quiz Result", resHome: "Other topic", resRestart: "Retry", teacherLabel: "TEACHER PANEL", teacherMaintitle: "Quizzes & Results", btnCreateTab: "Create Quiz", btnResTab: "Results", btnQrTab: "Show QR", btnRetStud: "Back to Student", createTitle: "Create Your Quiz", aiTeachTitle: "Create with AI", lblTestName: "Quiz Title", lblTestCat: "Category", btnAddQ: "Add Question", btnPublish: "Save & Publish", resTitle2: "Student Results", thName: "Name / Email", thTopic: "Quiz Topic", thDate: "Date", thScore: "Score", loaderTitle: "AI is analyzing...", authTitle: "Register", authSubm: "Save & Start", pinTitle: "Teacher PIN", pinSubm: "Enter", qrTitle: "QR Code for Students", setLangTitle: "System Language", setLangDesc: "Choose the main interface language:", setThemeTitle: "Dark Mode", setThemeDesc: "Enable dark interface to reduce eye strain.", setTimeTitle: "Adjust Timer", setTimeDesc: "Select the standard time for each quiz:", setApiTitle: "System API Keys (Teacher)", setApiDesc: "Save the Gemini key here to enable AI features.", setDelTitle: "Clear Data", setDelDesc: "Delete all saved quizzes and results in this browser.", btnSaveKey: "Save", btnDel: "Delete All", aiGenBtn: "Generate AI" }
+        };
+
+        // ОТСЛЕЖИВАНИЕ СОСТОЯНИЯ АВТОРИЗАЦИИ В SUPABASE
+        supabase.auth.onAuthStateChange((event, session) => {
+            if (session) {
+                window.currentUserName = session.user.user_metadata?.full_name || session.user.email.split('@')[0];
+                window.currentUserEmail = session.user.email;
+                window.isLoggedIn = true;
+                document.getElementById('auth-modal').classList.add('hidden');
+                document.getElementById('ui-login-btn').textContent = `👤 ${window.currentUserName}`;
+            } else {
+                window.isLoggedIn = false;
+                if(window.currentRole !== 'teacher') {
+                    document.getElementById('auth-modal').classList.remove('hidden');
+                    document.getElementById('ui-login-btn').textContent = TRANSLATIONS[window.currentLang].login;
+                }
+            }
+        });
+
+        // 3. НОВЫЕ ФУНКЦИИ ВХОДА (GOOGLE / APPLE / EMAIL)
+        window.socialLogin = async function(provider) {
+            const { data, error } = await supabase.auth.signInWithOAuth({
+                provider: provider,
+                options: {
+                    redirectTo: window.location.origin
+                }
+            });
+            if (error) window.showToast("Қате: " + error.message, true);
+        };
+
+        window.handleAuthSubmit = async function(e) {
+            e.preventDefault();
+            const name = document.getElementById('auth-name-input').value.trim();
+            const email = document.getElementById('auth-email-input').value.trim();
+            const password = document.getElementById('auth-pass-input').value; // Получаем пароль
+
+            const { data, error } = await supabase.auth.signUp({
+                email: email,
+                password: password,
+                options: { data: { full_name: name } }
+            });
+
+            if (error) {
+                window.showToast("Қате: " + error.message, true);
+            } else {
+                window.showToast(`Сәтті тіркелдіңіз, ${name}!`);
             }
         };
 
-        // БҰЛ ЖЕРДЕ ЖАҢАРТЫЛДЫ! БАЗАДАН АҚПАРАТ ОҚИДЫ
+        window.logoutUser = async function() {
+            await supabase.auth.signOut();
+            location.reload();
+        };
+
+        // Загрузка тестов из JSONBin
         async function loadPublicData() {
             try {
                 const res = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}/latest`, {
@@ -481,14 +492,12 @@
                     firebaseStudentResults = data.record.results || [];
                 }
             } catch(e) {
-                console.error("JSONBin load error, using fallback");
                 firebaseTeacherQuizzes = JSON.parse(localStorage.getItem('quizly_public_quizzes') || '[]');
                 firebaseStudentResults = JSON.parse(localStorage.getItem('quizly_public_results') || '[]');
             }
-            renderTopics(); // БАЗАДАН КЕЛГЕННЕН КЕЙІН КАРТОЧКАЛАРДЫ ШЫҒАРАДЫ
+            renderTopics(); 
         }
 
-        // БҰЛ ЖЕРДЕ ЖАҢАРТЫЛДЫ! БАЗАҒА АҚПАРАТ ЖАЗАДЫ
         async function savePublicDataToJSONBin() {
             try {
                 await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`, {
@@ -496,29 +505,17 @@
                     headers: { 'Content-Type': 'application/json', 'X-Master-Key': JSONBIN_API_KEY },
                     body: JSON.stringify({ quizzes: firebaseTeacherQuizzes, results: firebaseStudentResults })
                 });
-            } catch(e) {
-                 console.error("JSONBin save error", e);
-            }
+            } catch(e) {}
             localStorage.setItem('quizly_public_quizzes', JSON.stringify(firebaseTeacherQuizzes));
             localStorage.setItem('quizly_public_results', JSON.stringify(firebaseStudentResults));
         }
 
+        // Инициализация
         try {
             const savedSettings = JSON.parse(localStorage.getItem('quizly_settings'));
             if(savedSettings) {
                 window.appSettings = { ...window.appSettings, ...savedSettings };
             }
-            window.currentUserName = localStorage.getItem('quizly_user_name') || '';
-            window.currentUserEmail = localStorage.getItem('quizly_user_email') || '';
-            window.isLoggedIn = !!window.currentUserName;
-            
-            if(!window.isLoggedIn) {
-                document.getElementById('auth-modal').classList.remove('hidden');
-            } else {
-                document.getElementById('auth-modal').classList.add('hidden');
-                document.getElementById('ui-login-btn').textContent = `👤 ${window.currentUserName}`;
-            }
-
             if(window.appSettings.theme === 'dark') {
                 document.body.classList.add('dark-mode');
                 document.getElementById('theme-toggle').checked = true;
@@ -526,8 +523,7 @@
             if(window.appSettings.apiKey) {
                 document.getElementById('settings-api-key').value = window.appSettings.apiKey;
             }
-            
-            loadPublicData(); // САЙТ АШЫЛҒАНДА БАЗАДАН ОҚИДЫ
+            loadPublicData(); 
         } catch(e) {}
 
         const STATIC_TOPICS = Array.from({length: 30}, (_, i) => {
@@ -541,8 +537,7 @@
                     { q: "Бірінші сұрақ?", options: ["А", "В", "С", "Д"], answer: 0, hint: "А нұсқасын таңдаңыз" },
                     { q: "Екінші сұрақ?", options: ["А", "В", "С", "Д"], answer: 1, hint: "В нұсқасын таңдаңыз" },
                     { q: "Үшінші сұрақ?", options: ["А", "В", "С", "Д"], answer: 2, hint: "С нұсқасын таңдаңыз" },
-                    { q: "Төртінші сұрақ?", options: ["А", "В", "С", "Д"], answer: 3, hint: "Д нұсқасын таңдаңыз" },
-                    { q: "Бесінші сұрақ?", options: ["А", "В", "С", "Д"], answer: 0, hint: "А нұсқасын таңдаңыз" }
+                    { q: "Төртінші сұрақ?", options: ["А", "В", "С", "Д"], answer: 3, hint: "Д нұсқасын таңдаңыз" }
                 ]
             };
         });
@@ -566,10 +561,8 @@
                 activeBtn.classList.remove('bg-white', 'text-slate-700', 'dark:bg-[#1e1e1e]', 'dark:text-slate-300');
                 activeBtn.classList.add('bg-indigo-600', 'text-white');
             }
-            
             const t = TRANSLATIONS[lang] || TRANSLATIONS.kk;
             const setTxt = (id, txt) => { if(document.getElementById(id)) document.getElementById(id).innerHTML = txt; };
-            
             setTxt('ui-login-btn', window.isLoggedIn ? `👤 ${window.currentUserName}` : t.login);
             setTxt('ui-logout-btn', t.logout); setTxt('ui-teacher-panel-btn', t.teacherPanel); 
             setTxt('ui-hero-tag', t.heroTag); setTxt('ui-title-line1', t.title1); setTxt('ui-title-line2', t.title2);
@@ -589,21 +582,12 @@
             setTxt('ui-th-topic', t.thTopic); setTxt('ui-th-date', t.thDate); setTxt('ui-th-score', t.thScore);
             setTxt('ui-loader-title', t.loaderTitle); setTxt('ui-auth-title', t.authTitle); setTxt('ui-auth-submit', t.authSubm); 
             setTxt('ui-pin-title', t.pinTitle); setTxt('ui-pin-submit', t.pinSubm); setTxt('ui-qr-title', t.qrTitle);
-            
             setTxt('ui-set-lang-title', `<i class="fa-solid fa-globe text-blue-500"></i> ${t.setLangTitle}`);
-            setTxt('ui-set-lang-desc', t.setLangDesc);
-            setTxt('ui-set-theme-title', `<i class="fa-solid fa-moon text-indigo-500"></i> ${t.setThemeTitle}`);
-            setTxt('ui-set-theme-desc', t.setThemeDesc);
-            setTxt('ui-set-time-title', `<i class="fa-solid fa-stopwatch text-amber-500"></i> ${t.setTimeTitle}`);
-            setTxt('ui-set-time-desc', t.setTimeDesc);
-            setTxt('ui-set-api-title', `<i class="fa-solid fa-key text-emerald-500"></i> ${t.setApiTitle}`);
-            setTxt('ui-set-api-desc', t.setApiDesc);
-            setTxt('ui-set-del-title', t.setDelTitle);
-            setTxt('ui-set-del-desc', t.setDelDesc);
-            setTxt('ui-btn-save-key', t.btnSaveKey);
-            setTxt('ui-btn-del', t.btnDel);
-            setTxt('ui-btn-ai-gen', `<i class="fa-solid fa-robot"></i> ${t.aiGenBtn}`);
-            
+            setTxt('ui-set-lang-desc', t.setLangDesc); setTxt('ui-set-theme-title', `<i class="fa-solid fa-moon text-indigo-500"></i> ${t.setThemeTitle}`);
+            setTxt('ui-set-theme-desc', t.setThemeDesc); setTxt('ui-set-time-title', `<i class="fa-solid fa-stopwatch text-amber-500"></i> ${t.setTimeTitle}`);
+            setTxt('ui-set-time-desc', t.setTimeDesc); setTxt('ui-set-api-title', `<i class="fa-solid fa-key text-emerald-500"></i> ${t.setApiTitle}`);
+            setTxt('ui-set-api-desc', t.setApiDesc); setTxt('ui-set-del-title', t.setDelTitle); setTxt('ui-set-del-desc', t.setDelDesc);
+            setTxt('ui-btn-save-key', t.btnSaveKey); setTxt('ui-btn-del', t.btnDel); setTxt('ui-btn-ai-gen', `<i class="fa-solid fa-robot"></i> ${t.aiGenBtn}`);
             renderTopics();
         };
 
@@ -624,32 +608,23 @@
                 activeBtn.classList.add('bg-indigo-600', 'text-white');
                 activeBtn.classList.remove('bg-white', 'text-slate-700', 'dark:bg-[#1e1e1e]', 'dark:text-slate-300');
             }
-            window.appSettings.defaultTimer = seconds;
-            saveSettings();
-            window.showToast(`${seconds / 60} минуттық уақыт орнатылды!`);
+            window.appSettings.defaultTimer = seconds; saveSettings();
         };
         setTimeout(() => window.setTimer(window.appSettings.defaultTimer), 100);
 
         window.saveApiKey = function() {
-            const key = document.getElementById('settings-api-key').value.trim();
-            window.appSettings.apiKey = key;
-            saveSettings();
-            window.showToast("API кілті сақталды!");
+            window.appSettings.apiKey = document.getElementById('settings-api-key').value.trim();
+            saveSettings(); window.showToast("API кілті сақталды!");
         };
 
         window.clearAllData = function() {
             if(confirm("Барлық тесттер мен нәтижелерді өшіргіңіз келе ме?")) {
-                localStorage.clear();
-                firebaseTeacherQuizzes = [];
-                firebaseStudentResults = [];
-                savePublicDataToJSONBin();
-                location.reload();
+                localStorage.clear(); firebaseTeacherQuizzes = []; firebaseStudentResults = [];
+                savePublicDataToJSONBin(); location.reload();
             }
         };
 
-        function saveSettings() {
-            try { localStorage.setItem('quizly_settings', JSON.stringify(window.appSettings)); } catch(e){}
-        }
+        function saveSettings() { try { localStorage.setItem('quizly_settings', JSON.stringify(window.appSettings)); } catch(e){} }
 
         window.switchView = function(viewName) {
             ['topics', 'quiz', 'teacher', 'results', 'settings'].forEach(v => {
@@ -658,10 +633,7 @@
             });
             document.getElementById(`view-${viewName}`).classList.remove('hidden');
             if(viewName !== 'quiz') clearInterval(window.timerInterval);
-            
-            if(viewName === 'topics') {
-                 loadPublicData(); // Басты бетке қайтқанда тізімді жаңартып алады
-            }
+            if(viewName === 'topics') loadPublicData(); 
         };
         
         window.switchRole = function(role) {
@@ -673,35 +645,6 @@
 
         window.openAuthModal = () => document.getElementById('auth-modal').classList.remove('hidden');
         window.closeAuthModal = () => document.getElementById('auth-modal').classList.add('hidden');
-        
-        window.socialLogin = function(provider) {
-            window.currentUserName = `${provider} Қолданушысы`;
-            window.currentUserEmail = `${provider.toLowerCase()}_user@quizly.kz`;
-            window.isLoggedIn = true;
-            localStorage.setItem('quizly_user_name', window.currentUserName);
-            localStorage.setItem('quizly_user_email', window.currentUserEmail);
-            document.getElementById('ui-login-btn').textContent = `👤 ${window.currentUserName}`;
-            document.getElementById('auth-modal').classList.add('hidden');
-            window.showToast(`${provider} арқылы сәтті кірдіңіз!`);
-        };
-
-        window.handleAuthSubmit = function(e) {
-            e.preventDefault();
-            const name = document.getElementById('auth-name-input').value.trim();
-            const email = document.getElementById('auth-email-input').value.trim();
-            window.currentUserName = name; window.currentUserEmail = email;
-            window.isLoggedIn = true;
-            try { localStorage.setItem('quizly_user_name', name); localStorage.setItem('quizly_user_email', email); } catch(err) {}
-            document.getElementById('ui-login-btn').textContent = `👤 ${name}`;
-            document.getElementById('auth-modal').classList.add('hidden');
-            window.showToast(`Қош келдіңіз, ${name}!`);
-        };
-
-        window.logoutUser = function() {
-            localStorage.removeItem('quizly_user_name'); localStorage.removeItem('quizly_user_email');
-            location.reload();
-        };
-
         window.promptTeacherAccess = () => document.getElementById('teacher-pin-modal').classList.remove('hidden');
         window.closeTeacherPinModal = () => document.getElementById('teacher-pin-modal').classList.add('hidden');
         
@@ -709,7 +652,7 @@
             const pin = document.getElementById('teacher-pin-input').value.trim();
             if (pin.length >= 3) {
                 window.closeTeacherPinModal();
-                window.currentUserName = 'Мұғалім'; window.currentUserEmail = 'teacher@quizly.kz'; window.isLoggedIn = true;
+                window.currentRole = 'teacher';
                 window.showToast("Оқытушы режимі іске қосылды!"); window.switchRole('teacher');
             } else window.showToast("Құпия код кемі 3 таңба!", true);
         };
@@ -770,13 +713,10 @@
             firebaseTeacherQuizzes.unshift(newQuiz);
             
             window.showToast("Тест сақталуда... Күте тұрыңыз!");
-            
-            await savePublicDataToJSONBin(); // БАЗАҒА ЖІБЕРЕДІ
-            
+            await savePublicDataToJSONBin(); 
             window.showToast("Тест сәтті жарияланды!");
             document.getElementById('teacher-quiz-title').value = ''; document.getElementById('teacher-questions-list').innerHTML = '';
-            
-            window.switchRole('student'); // Оқушы режиміне қайтарады
+            window.switchRole('student'); 
         };
 
         let currentFilter = 'all';
@@ -797,7 +737,6 @@
                 card.className = isTeacher ? 'topic-card p-6 cursor-pointer flex flex-col justify-between border-indigo-200 min-h-[220px] bg-indigo-50/40 dark:bg-[#1e1e1e]' : 'topic-card p-6 cursor-pointer flex flex-col justify-between relative min-h-[220px]';
                 
                 const titleStr = typeof obj.title === 'object' ? (obj.title[window.currentLang] || obj.title.kk) : obj.title;
-                
                 card.onclick = () => startQuiz(isTeacher ? obj : { title: titleStr, questions: obj.questions });
                 card.innerHTML = `
                     <div>
@@ -839,7 +778,6 @@
                 optDiv.innerHTML = `<div class="w-8 h-8 rounded-lg ${isSel?'bg-indigo-600 text-white':'bg-slate-200 text-slate-700'} font-bold flex items-center justify-center text-sm">${['A','B','C','D'][idx]}</div><div class="text-sm">${opt}</div>`;
                 container.appendChild(optDiv);
             });
-            
             document.getElementById('btn-prev').disabled = window.currentQuestionIdx === 0;
             document.getElementById('ui-btn-next').textContent = window.currentQuestionIdx === total - 1 ? TRANSLATIONS[window.currentLang].finishLbl : TRANSLATIONS[window.currentLang].nextLbl;
         }
@@ -879,11 +817,8 @@
             firebaseStudentResults.unshift(rec);
             
             window.showToast("Нәтиже сақталуда...");
-            
-            await savePublicDataToJSONBin(); // БАЗАҒА ЖІБЕРЕДІ
-
+            await savePublicDataToJSONBin(); 
             sendResultToTelegram(window.currentUserName, `${score}/${total} (${percent}%)`, window.currentQuiz.title);
-            
             renderHistory(); renderStudentResults(); window.showToast("Нәтиже сақталды және Telegram-ға жіберілді!");
         };
 
