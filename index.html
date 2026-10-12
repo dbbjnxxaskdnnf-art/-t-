@@ -328,7 +328,7 @@
         </div>
     </main>
 
-    <!-- APPLE / GOOGLE ОРИГИНАЛ БАТЫРМАЛАРЫМЕН ТІРКЕЛУ ЭКРАНЫ -->
+    <!-- ТІРКЕЛУ ЭКРАНЫ -->
     <div id="auth-modal" class="fixed inset-0 bg-black/60 backdrop-blur-md z-50 flex items-center justify-center p-4">
         <div class="bg-white dark:bg-[#1e1e1e] rounded-3xl p-6 md:p-8 max-w-sm w-full shadow-2xl relative text-center">
             <div class="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-xl font-bold mx-auto mb-3"><i class="fa-solid fa-sparkles"></i></div>
@@ -356,7 +356,6 @@
                     <span class="flex-shrink mx-4 text-slate-400 text-xs uppercase">немесе пошта арқылы</span>
                     <div class="flex-grow border-t border-slate-200 dark:border-slate-600"></div>
                 </div>
-                <!-- ДОБАВЛЕНО ПОЛЕ ДЛЯ ПАРОЛЯ -->
                 <form onsubmit="handleAuthSubmit(event)" class="space-y-3 text-left">
                     <input type="text" id="auth-name-input" required class="w-full bg-slate-50 dark:bg-[#2d2d2d] dark:border-slate-600 dark:text-white border border-slate-200 rounded-xl p-3 text-sm focus:outline-none" placeholder="Аты-жөніңіз">
                     <input type="email" id="auth-email-input" required class="w-full bg-slate-50 dark:bg-[#2d2d2d] dark:border-slate-600 dark:text-white border border-slate-200 rounded-xl p-3 text-sm focus:outline-none" placeholder="Электрондық пошта">
@@ -367,7 +366,6 @@
         </div>
     </div>
 
-    <!-- ТЕ ЖЕ САМЫЕ МОДАЛЬНЫЕ ОКНА ДЛЯ ПИН-КОДА И QR -->
     <div id="teacher-pin-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white rounded-3xl p-6 md:p-8 max-w-sm w-full shadow-2xl relative text-center">
             <button class="absolute top-4 right-4 text-slate-400 text-lg cursor-pointer" onclick="closeTeacherPinModal()"><i class="fa-solid fa-xmark"></i></button>
@@ -395,16 +393,11 @@
         <i class="fa-solid fa-circle-check text-emerald-400" id="toast-icon"></i><span id="toast-message">Хабарлама</span>
     </div>
 
-    <!-- ИЗМЕНЕННЫЙ БЛОК СКРИПТОВ С ПОДКЛЮЧЕНИЕМ SUPABASE -->
+    <!-- SUPABASE БАЙЛАНЫСЫ ДҰРЫС URL МЕН ҚОЙЫЛДЫ -->
     <script type="module">
-        // 1. ИМПОРТ SUPABASE напрямую из CDN
         import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
 
-        // 2. ВАШИ КЛЮЧИ (Секретный ключ сюда НЕ вставляем!)
         const SUPABASE_URL = 'https://tobsozpdoyvgjfmxswnn.supabase.co';
-        
-        /* Примечание: Стандартный публичный ключ Supabase обычно начинается с "eyJ...". 
-           Если текущий ключ вызовет ошибку, зайдите в Supabase -> Project Settings -> API и скопируйте ключ "anon public". */
         const SUPABASE_ANON_KEY = 'sb_publishable_BdR3JYk1dSG-i7T29wxxYQ_KmftNhbF';
         
         const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -415,20 +408,17 @@
         window.isLoggedIn = false;
         window.appSettings = { theme: 'light', defaultTimer: 600, apiKey: '' };
 
-        // Сохранение тестов оставил через JSONBin, как было настроено ранее
         let firebaseTeacherQuizzes = [];
         let firebaseStudentResults = [];
         const JSONBIN_BIN_ID = '670a5c43acd3cb34a8966779'; 
         const JSONBIN_API_KEY = '$2a$10$eE5r0Q1oXlP21XoH32N.H.gUoX0Z49XqO4xZ/4yGz6T7mQ5m9YnRy'; 
         
-        // ... (Блок переводов TRANSLATIONS остается без изменений, скрыл для краткости) ...
         const TRANSLATIONS = {
             kk: { login: "Тіркелу", logout: "Шығу", teacherPanel: "Оқытушы", heroTag: "Жанға арналған азық", title1: "Қызық болыңыз.", title2: "Біраз ойнап көріңіз.", subtitle: "30 түрлі санаттағы мықты тесттер жиынтығы.", startBtn: "Бастау", genBtn: "Жасау", aiTitle: "AI Тақырып Генераторы", aiDesc: "Тақырыпты енгізіңіз, AI сұрақтар құрастырады", moodLbl: "САНАТТАР", sectionTitle: "Барлық викториналар", fAll: "Барлық тесттер", fScience: "Ғылым & Технология", fCulture: "Мәдениет & Өнер", fHistory: "Тарих", fProg: "IT & Бағдарламалау", historyTitle: "Өткен тесттер тарихы", hintBtn: "AI Көмек", backLbl: "Артқа", nextLbl: "Келесі", finishLbl: "Аяқтау", qListTitle: "Сұрақтар тізімі", resTitle: "Тест Нәтижесі", resHome: "Басқа тақырып", resRestart: "Қайта тапсыру", teacherLabel: "ОҚЫТУШЫ ПАНЕЛІ", teacherMaintitle: "Тесттер мен нәтижелер", btnCreateTab: "Тест жасау", btnResTab: "Нәтижелер", btnQrTab: "QR Көрсету", btnRetStud: "Оқушыға қайту", createTitle: "Өз тестіңізді жасаңыз", aiTeachTitle: "AI көмегімен жасау", lblTestName: "Тест атауы", lblTestCat: "Санат", btnAddQ: "Сұрақ қосу", btnPublish: "Сақтау & Жариялау", resTitle2: "Оқушы нәтижелері", thName: "Аты / Поштасы", thTopic: "Тест Тақырыбы", thDate: "Күні", thScore: "Нәтиже", loaderTitle: "AI талдап жатыр...", authTitle: "Тіркеліңіз", authSubm: "Сақтау & Бастау", pinTitle: "Оқытушы PIN коды", pinSubm: "Кіру", qrTitle: "Оқушыларға арналған QR Код", setLangTitle: "Жүйе тілі", setLangDesc: "Платформаның негізгі интерфейс тілін таңдаңыз:", setThemeTitle: "Түнгі режим (Dark Mode)", setThemeDesc: "Көзді шаршатпау үшін қараңғы интерфейсті қосыңыз.", setTimeTitle: "Тест уақытын реттеу", setTimeDesc: "Әр тестке берілетін стандартты уақытты таңдаңыз:", setApiTitle: "Жүйелік API кілттері (Мұғалімге)", setApiDesc: "Кодты ашпай-ақ, AI жұмыс істеуі үшін Gemini кілтін осы жерге сақтаңыз.", setDelTitle: "Деректерді тазалау", setDelDesc: "Осы браузердегі барлық сақталған тесттер мен нәтижелерді жою.", btnSaveKey: "Сақтау", btnDel: "Толық өшіру", aiGenBtn: "AI Жасау" },
             ru: { login: "Войти", logout: "Выйти", teacherPanel: "Учитель", heroTag: "Пища для ума", title1: "Будьте любопытны.", title2: "Поиграйте со знаниями.", subtitle: "Коллекция из 30 крутых тестов разных категорий.", startBtn: "Начать", genBtn: "Создать", aiTitle: "ИИ Генератор", aiDesc: "Введите тему, ИИ составит вопросы", moodLbl: "КАТЕГОРИИ", sectionTitle: "30 викторин", fAll: "Все тесты", fScience: "Наука", fCulture: "Культура", fHistory: "История", fProg: "IT", historyTitle: "История тестов", hintBtn: "ИИ Подсказка", backLbl: "Назад", nextLbl: "Далее", finishLbl: "Завершить", qListTitle: "Список вопросов", resTitle: "Результат", resHome: "Другая тема", resRestart: "Пройти снова", teacherLabel: "ПАНЕЛЬ УЧИТЕЛЯ", teacherMaintitle: "Тесты и результаты", btnCreateTab: "Создать тест", btnResTab: "Результаты", btnQrTab: "Показать QR", btnRetStud: "Назад к ученику", createTitle: "Создайте свой тест", aiTeachTitle: "Создание с ИИ", lblTestName: "Название теста", lblTestCat: "Категория", btnAddQ: "Добавить вопрос", btnPublish: "Сохранить и опубликовать", resTitle2: "Результаты учеников", thName: "Имя / Почта", thTopic: "Тема Теста", thDate: "Дата", thScore: "Счет", loaderTitle: "ИИ анализирует...", authTitle: "Регистрация", authSubm: "Сохранить и Начать", pinTitle: "PIN код Учителя", pinSubm: "Войти", qrTitle: "QR Код для Учеников", setLangTitle: "Язык системы", setLangDesc: "Выберите основной язык интерфейса:", setThemeTitle: "Ночной режим (Dark Mode)", setThemeDesc: "Включите темный интерфейс для снижения нагрузки на глаза.", setTimeTitle: "Настройка времени", setTimeDesc: "Выберите стандартное время на каждый тест:", setApiTitle: "Системные API ключи (Учитель)", setApiDesc: "Сохраните ключ Gemini здесь для работы ИИ.", setDelTitle: "Очистка данных", setDelDesc: "Удалить все сохраненные тесты и результаты в этом браузере.", btnSaveKey: "Сохранить", btnDel: "Полностью удалить", aiGenBtn: "Создать с ИИ" },
             en: { login: "Sign In", logout: "Logout", teacherPanel: "Teacher", heroTag: "Food for thought", title1: "Stay curious.", title2: "Play with knowledge.", subtitle: "A collection of 30 great quizzes.", startBtn: "Start", genBtn: "Generate", aiTitle: "AI Generator", aiDesc: "Enter topic, AI will create questions", moodLbl: "CATEGORIES", sectionTitle: "30 Quizzes", fAll: "All quizzes", fScience: "Science", fCulture: "Culture", fHistory: "History", fProg: "IT", historyTitle: "Quiz History", hintBtn: "AI Hint", backLbl: "Back", nextLbl: "Next", finishLbl: "Finish", qListTitle: "Questions List", resTitle: "Quiz Result", resHome: "Other topic", resRestart: "Retry", teacherLabel: "TEACHER PANEL", teacherMaintitle: "Quizzes & Results", btnCreateTab: "Create Quiz", btnResTab: "Results", btnQrTab: "Show QR", btnRetStud: "Back to Student", createTitle: "Create Your Quiz", aiTeachTitle: "Create with AI", lblTestName: "Quiz Title", lblTestCat: "Category", btnAddQ: "Add Question", btnPublish: "Save & Publish", resTitle2: "Student Results", thName: "Name / Email", thTopic: "Quiz Topic", thDate: "Date", thScore: "Score", loaderTitle: "AI is analyzing...", authTitle: "Register", authSubm: "Save & Start", pinTitle: "Teacher PIN", pinSubm: "Enter", qrTitle: "QR Code for Students", setLangTitle: "System Language", setLangDesc: "Choose the main interface language:", setThemeTitle: "Dark Mode", setThemeDesc: "Enable dark interface to reduce eye strain.", setTimeTitle: "Adjust Timer", setTimeDesc: "Select the standard time for each quiz:", setApiTitle: "System API Keys (Teacher)", setApiDesc: "Save the Gemini key here to enable AI features.", setDelTitle: "Clear Data", setDelDesc: "Delete all saved quizzes and results in this browser.", btnSaveKey: "Save", btnDel: "Delete All", aiGenBtn: "Generate AI" }
         };
 
-        // ОТСЛЕЖИВАНИЕ СОСТОЯНИЯ АВТОРИЗАЦИИ В SUPABASE
         supabase.auth.onAuthStateChange((event, session) => {
             if (session) {
                 window.currentUserName = session.user.user_metadata?.full_name || session.user.email.split('@')[0];
@@ -445,13 +435,10 @@
             }
         });
 
-        // 3. НОВЫЕ ФУНКЦИИ ВХОДА (GOOGLE / APPLE / EMAIL)
         window.socialLogin = async function(provider) {
-            const { data, error } = await supabase.auth.signInWithOAuth({
+            const { error } = await supabase.auth.signInWithOAuth({
                 provider: provider,
-                options: {
-                    redirectTo: window.location.origin
-                }
+                options: { redirectTo: window.location.origin }
             });
             if (error) window.showToast("Қате: " + error.message, true);
         };
@@ -460,9 +447,9 @@
             e.preventDefault();
             const name = document.getElementById('auth-name-input').value.trim();
             const email = document.getElementById('auth-email-input').value.trim();
-            const password = document.getElementById('auth-pass-input').value; // Получаем пароль
+            const password = document.getElementById('auth-pass-input').value;
 
-            const { data, error } = await supabase.auth.signUp({
+            const { error } = await supabase.auth.signUp({
                 email: email,
                 password: password,
                 options: { data: { full_name: name } }
@@ -471,7 +458,7 @@
             if (error) {
                 window.showToast("Қате: " + error.message, true);
             } else {
-                window.showToast(`Сәтті тіркелдіңіз, ${name}!`);
+                window.showToast(`Сәтті тіркелдіңіз, ${name}! Поштаңызды растаңыз.`);
             }
         };
 
@@ -480,7 +467,6 @@
             location.reload();
         };
 
-        // Загрузка тестов из JSONBin
         async function loadPublicData() {
             try {
                 const res = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}/latest`, {
@@ -510,19 +496,14 @@
             localStorage.setItem('quizly_public_results', JSON.stringify(firebaseStudentResults));
         }
 
-        // Инициализация
         try {
             const savedSettings = JSON.parse(localStorage.getItem('quizly_settings'));
-            if(savedSettings) {
-                window.appSettings = { ...window.appSettings, ...savedSettings };
-            }
+            if(savedSettings) window.appSettings = { ...window.appSettings, ...savedSettings };
             if(window.appSettings.theme === 'dark') {
                 document.body.classList.add('dark-mode');
                 document.getElementById('theme-toggle').checked = true;
             }
-            if(window.appSettings.apiKey) {
-                document.getElementById('settings-api-key').value = window.appSettings.apiKey;
-            }
+            if(window.appSettings.apiKey) document.getElementById('settings-api-key').value = window.appSettings.apiKey;
             loadPublicData(); 
         } catch(e) {}
 
