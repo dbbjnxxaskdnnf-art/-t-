@@ -438,7 +438,7 @@
         window.socialLogin = async function(provider) {
             const { error } = await supabase.auth.signInWithOAuth({
                 provider: provider,
-                options: { redirectTo: window.location.origin }
+                options: { redirectTo: 'https://dbbjnxxaskdnnf-art.github.io/-t-/' }
             });
             if (error) window.showToast("Қате: " + error.message, true);
         };
@@ -871,3 +871,4 @@
     </script>
 </body>
 </html>
+
