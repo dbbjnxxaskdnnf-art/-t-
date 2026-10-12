@@ -137,7 +137,7 @@
 
             <div id="topics-section" class="mb-6">
                 <div class="text-xs font-extrabold text-slate-400 uppercase tracking-widest mb-1" id="ui-mood-lbl">САНАТТАР</div>
-                <h2 class="serif-heading text-3xl font-bold text-slate-900 mb-6" id="ui-section-topics">30 тамаша викторина</h2>
+                <h2 class="serif-heading text-3xl font-bold text-slate-900 mb-6" id="ui-section-topics">Барлық викториналар</h2>
                 <div class="flex items-center gap-2.5 overflow-x-auto pb-4 no-scrollbar">
                     <button class="filter-pill active" onclick="filterTopics('all', event)" id="f-all">Барлық тесттер</button>
                     <button class="filter-pill" onclick="filterTopics('science', event)" id="f-science">Ғылым & Технология</button>
@@ -147,6 +147,7 @@
                 </div>
             </div>
 
+            <!-- Мұнда барлық тесттер жүктеледі, соның ішінде мұғалім қосатындары да -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12" id="topics-grid"></div>
 
             <div class="mt-8 bg-white/70 border border-slate-200/80 rounded-3xl p-6">
@@ -329,7 +330,7 @@
         </div>
     </main>
 
-    <!-- APPLE / GOOGLE / ТІРКЕЛУ ЭКРАНЫ (КІРГЕНДЕ АВТОМАТ ШЫҒАДЫ) -->
+    <!-- APPLE / GOOGLE / ТІРКЕЛУ ЭКРАНЫ -->
     <div id="auth-modal" class="fixed inset-0 bg-black/60 backdrop-blur-md z-50 flex items-center justify-center p-4">
         <div class="bg-white dark:bg-[#1e1e1e] rounded-3xl p-6 md:p-8 max-w-sm w-full shadow-2xl relative text-center">
             <div class="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-xl font-bold mx-auto mb-3"><i class="fa-solid fa-sparkles"></i></div>
@@ -402,15 +403,16 @@
         let firebaseTeacherQuizzes = [];
         let firebaseStudentResults = [];
 
-        const JSONBIN_BIN_ID = '65e92c20dc74654018b1d7d2'; 
-        const JSONBIN_API_KEY = '$2a$10$7Xb...'; 
+        // БҰЛ ЖЕРДЕ ЖАҢАРТЫЛДЫ! БАЗА КІЛТТЕРІ ҚОСЫЛДЫ.
+        const JSONBIN_BIN_ID = '670a5c43acd3cb34a8966779'; 
+        const JSONBIN_API_KEY = '$2a$10$eE5r0Q1oXlP21XoH32N.H.gUoX0Z49XqO4xZ/4yGz6T7mQ5m9YnRy'; 
 
         const TRANSLATIONS = {
             kk: { 
                 login: "Тіркелу", logout: "Шығу", teacherPanel: "Оқытушы", heroTag: "Жанға арналған азық", 
                 title1: "Қызық болыңыз.", title2: "Біраз ойнап көріңіз.", subtitle: "30 түрлі санаттағы мықты тесттер жиынтығы.", 
                 startBtn: "Бастау", genBtn: "Жасау", aiTitle: "AI Тақырып Генераторы", aiDesc: "Тақырыпты енгізіңіз, AI сұрақтар құрастырады", 
-                moodLbl: "САНАТТАР", sectionTitle: "30 тамаша викторина", fAll: "Барлық тесттер", fScience: "Ғылым & Технология", 
+                moodLbl: "САНАТТАР", sectionTitle: "Барлық викториналар", fAll: "Барлық тесттер", fScience: "Ғылым & Технология", 
                 fCulture: "Мәдениет & Өнер", fHistory: "Тарих", fProg: "IT & Бағдарламалау", historyTitle: "Өткен тесттер тарихы", 
                 hintBtn: "AI Көмек", backLbl: "Артқа", nextLbl: "Келесі", finishLbl: "Аяқтау", qListTitle: "Сұрақтар тізімі", 
                 resTitle: "Тест Нәтижесі", resHome: "Басқа тақырып", resRestart: "Қайта тапсыру", teacherLabel: "ОҚЫТУШЫ ПАНЕЛІ", 
@@ -467,6 +469,7 @@
             }
         };
 
+        // БҰЛ ЖЕРДЕ ЖАҢАРТЫЛДЫ! БАЗАДАН АҚПАРАТ ОҚИДЫ
         async function loadPublicData() {
             try {
                 const res = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}/latest`, {
@@ -478,12 +481,14 @@
                     firebaseStudentResults = data.record.results || [];
                 }
             } catch(e) {
+                console.error("JSONBin load error, using fallback");
                 firebaseTeacherQuizzes = JSON.parse(localStorage.getItem('quizly_public_quizzes') || '[]');
                 firebaseStudentResults = JSON.parse(localStorage.getItem('quizly_public_results') || '[]');
             }
-            renderTopics();
+            renderTopics(); // БАЗАДАН КЕЛГЕННЕН КЕЙІН КАРТОЧКАЛАРДЫ ШЫҒАРАДЫ
         }
 
+        // БҰЛ ЖЕРДЕ ЖАҢАРТЫЛДЫ! БАЗАҒА АҚПАРАТ ЖАЗАДЫ
         async function savePublicDataToJSONBin() {
             try {
                 await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`, {
@@ -491,7 +496,9 @@
                     headers: { 'Content-Type': 'application/json', 'X-Master-Key': JSONBIN_API_KEY },
                     body: JSON.stringify({ quizzes: firebaseTeacherQuizzes, results: firebaseStudentResults })
                 });
-            } catch(e) {}
+            } catch(e) {
+                 console.error("JSONBin save error", e);
+            }
             localStorage.setItem('quizly_public_quizzes', JSON.stringify(firebaseTeacherQuizzes));
             localStorage.setItem('quizly_public_results', JSON.stringify(firebaseStudentResults));
         }
@@ -519,7 +526,8 @@
             if(window.appSettings.apiKey) {
                 document.getElementById('settings-api-key').value = window.appSettings.apiKey;
             }
-            loadPublicData();
+            
+            loadPublicData(); // САЙТ АШЫЛҒАНДА БАЗАДАН ОҚИДЫ
         } catch(e) {}
 
         const STATIC_TOPICS = Array.from({length: 30}, (_, i) => {
@@ -634,6 +642,7 @@
                 localStorage.clear();
                 firebaseTeacherQuizzes = [];
                 firebaseStudentResults = [];
+                savePublicDataToJSONBin();
                 location.reload();
             }
         };
@@ -649,6 +658,10 @@
             });
             document.getElementById(`view-${viewName}`).classList.remove('hidden');
             if(viewName !== 'quiz') clearInterval(window.timerInterval);
+            
+            if(viewName === 'topics') {
+                 loadPublicData(); // Басты бетке қайтқанда тізімді жаңартып алады
+            }
         };
         
         window.switchRole = function(role) {
@@ -709,7 +722,7 @@
             } else {
                 document.getElementById('teacher-tab-create').classList.add('hidden');
                 document.getElementById('teacher-tab-results').classList.remove('hidden');
-                renderStudentResults();
+                loadPublicData().then(() => renderStudentResults());
             }
         };
         
@@ -756,11 +769,14 @@
             const newQuiz = { id: 't_'+Date.now(), category: document.getElementById('teacher-quiz-cat').value, title, questions, author: window.currentUserEmail || 'teacher' };
             firebaseTeacherQuizzes.unshift(newQuiz);
             
-            await savePublicDataToJSONBin();
+            window.showToast("Тест сақталуда... Күте тұрыңыз!");
             
-            window.showToast("Тест сақталды және барлық оқушыларға көрінеді!");
+            await savePublicDataToJSONBin(); // БАЗАҒА ЖІБЕРЕДІ
+            
+            window.showToast("Тест сәтті жарияланды!");
             document.getElementById('teacher-quiz-title').value = ''; document.getElementById('teacher-questions-list').innerHTML = '';
-            renderTopics(); window.switchRole('student');
+            
+            window.switchRole('student'); // Оқушы режиміне қайтарады
         };
 
         let currentFilter = 'all';
@@ -862,7 +878,9 @@
             const rec = { studentName: window.currentUserName, studentEmail: window.currentUserEmail, title: window.currentQuiz.title, score, total, percent, date: new Date().toLocaleDateString() };
             firebaseStudentResults.unshift(rec);
             
-            await savePublicDataToJSONBin();
+            window.showToast("Нәтиже сақталуда...");
+            
+            await savePublicDataToJSONBin(); // БАЗАҒА ЖІБЕРЕДІ
 
             sendResultToTelegram(window.currentUserName, `${score}/${total} (${percent}%)`, window.currentQuiz.title);
             
