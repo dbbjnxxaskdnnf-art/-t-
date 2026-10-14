@@ -360,7 +360,7 @@
                     <input type="text" id="auth-name-input" required class="w-full bg-slate-50 dark:bg-[#2d2d2d] dark:border-slate-600 dark:text-white border border-slate-200 rounded-xl p-3 text-sm focus:outline-none" placeholder="Аты-жөніңіз">
                     <input type="email" id="auth-email-input" required class="w-full bg-slate-50 dark:bg-[#2d2d2d] dark:border-slate-600 dark:text-white border border-slate-200 rounded-xl p-3 text-sm focus:outline-none" placeholder="Электрондық пошта">
                     <input type="password" id="auth-pass-input" required class="w-full bg-slate-50 dark:bg-[#2d2d2d] dark:border-slate-600 dark:text-white border border-slate-200 rounded-xl p-3 text-sm focus:outline-none" placeholder="Құпия сөз (Кемі 6 таңба)">
-                    <button type="submit" class="w-full btn-indigo py-3 text-sm shadow-md text-center cursor-pointer">Тіркелу</button>
+                    <button type="submit" class="w-full btn-indigo py-3 text-sm shadow-md text-center cursor-pointer">Тіркелу / Кіру</button>
                 </form>
             </div>
         </div>
@@ -449,16 +449,29 @@
             const email = document.getElementById('auth-email-input').value.trim();
             const password = document.getElementById('auth-pass-input').value;
 
-            const { error } = await supabase.auth.signUp({
+            // Алдымен жүйеге кіріп көреміз
+            let { data, error } = await supabase.auth.signInWithPassword({
                 email: email,
-                password: password,
-                options: { data: { full_name: name } }
+                password: password
             });
 
+            // Егер ондай аккаунт болмаса, жаңадан тіркейміз
             if (error) {
-                window.showToast("Қате: " + error.message, true);
+                let signUpRes = await supabase.auth.signUp({
+                    email: email,
+                    password: password,
+                    options: { data: { full_name: name } }
+                });
+                
+                if (signUpRes.error) {
+                    window.showToast("Қате: " + signUpRes.error.message, true);
+                } else {
+                    window.showToast(`Сәтті тіркелдіңіз, ${name}!`);
+                    document.getElementById('auth-modal').classList.add('hidden');
+                }
             } else {
-                window.showToast(`Сәтті тіркелдіңіз, ${name}! Поштаңызды растаңыз.`);
+                window.showToast("Қош келдіңіз, " + (data.user.user_metadata?.full_name || email.split('@')[0]) + "!");
+                document.getElementById('auth-modal').classList.add('hidden');
             }
         };
 
@@ -871,4 +884,3 @@
     </script>
 </body>
 </html>
-
