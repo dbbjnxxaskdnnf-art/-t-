@@ -96,7 +96,7 @@
                         <span class="serif-heading block text-slate-900" id="ui-title-line1">Қызық болыңыз.</span>
                         <span class="serif-heading block text-terracotta" id="ui-title-line2">Біраз ойнап көріңіз.</span>
                     </h1>
-                    <p class="text-slate-600 text-base md:text-lg leading-relaxed mb-8 max-w-xl" id="ui-subtitle">30 түрлі санаттағы мықты тесттер жиынтығы. Карточканы таңдап, біліміңізді сынап көріңіз.</p>
+                    <p class="text-slate-600 text-base md:text-lg leading-relaxed mb-8 max-w-xl" id="ui-subtitle">Түрлі санаттағы мықты тесттер жиынтығы. Карточканы таңдап, біліміңізді сынап көріңіз.</p>
                     <div class="flex flex-wrap items-center gap-4">
                         <button class="btn-indigo flex items-center gap-2 text-sm shadow-lg shadow-indigo-600/20" onclick="document.getElementById('topics-section').scrollIntoView({behavior: 'smooth'})"><i class="fa-solid fa-play text-xs"></i> <span id="ui-btn-start">Бастау</span></button>
                     </div>
@@ -106,12 +106,12 @@
                     <div class="cards-container">
                         <div class="hero-card-blue">
                             <div class="flex justify-between items-center"><span class="text-[11px] font-bold uppercase tracking-wider opacity-80">QUIZLY</span><i class="fa-solid fa-sparkles text-xs"></i></div>
-                            <div class="serif-heading text-2xl font-bold leading-snug">30+ Тест. Үлкен ұшқын.</div>
+                            <div class="serif-heading text-2xl font-bold leading-snug">Білім. Логика. Пайым.</div>
                             <div class="text-xs font-bold flex items-center gap-1 opacity-90">Тексеру <i class="fa-solid fa-arrow-right text-[10px] ml-1"></i></div>
                         </div>
                         <div class="hero-card-lime">
                             <div class="flex justify-between items-center">
-                                <div class="bg-white/80 border border-black/5 px-2.5 py-0.5 rounded-full text-[11px] font-bold text-slate-800 flex items-center gap-1"><i class="fa-solid fa-trophy text-amber-500 text-[10px]"></i> 30 Тест</div>
+                                <div class="bg-white/80 border border-black/5 px-2.5 py-0.5 rounded-full text-[11px] font-bold text-slate-800 flex items-center gap-1"><i class="fa-solid fa-trophy text-amber-500 text-[10px]"></i> Тесттер</div>
                                 <i class="fa-solid fa-lightbulb text-xs opacity-70"></i>
                             </div>
                             <div class="serif-heading text-3xl font-bold text-slate-900 leading-tight">Дайынсың ба?</div>
@@ -140,7 +140,7 @@
                 <div class="flex items-center gap-2.5 overflow-x-auto pb-4 no-scrollbar">
                     <button class="filter-pill active" onclick="filterTopics('all', event)" id="f-all">Барлық тесттер</button>
                     <button class="filter-pill" onclick="filterTopics('science', event)" id="f-science">Ғылым & Технология</button>
-                    <button class="filter-pill" onclick="filterTopics('culture', event)" id="f-culture">Мәдениет & Өнер</button>
+                    <button class="filter-pill" onclick="filterTopics('culture', event)" id="f-culture">Мәдениет & Психология</button>
                     <button class="filter-pill" onclick="filterTopics('history', event)" id="f-history">Тарих</button>
                     <button class="filter-pill" onclick="filterTopics('programming', event)" id="f-prog">IT & Бағдарламалау</button>
                 </div>
@@ -281,7 +281,7 @@
                             <label class="block text-xs font-bold text-slate-600 uppercase mb-1" id="ui-lbl-test-cat">Санат</label>
                             <select id="teacher-quiz-cat" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm focus:outline-none">
                                 <option value="science" id="opt-sci">Ғылым & Технология</option>
-                                <option value="culture" id="opt-cul">Мәдениет & Өнер</option>
+                                <option value="culture" id="opt-cul">Мәдениет & Психология</option>
                                 <option value="history" id="opt-his">Тарих</option>
                                 <option value="programming" id="opt-pro">Бағдарламалау</option>
                             </select>
@@ -343,7 +343,6 @@
                 </div>
                 <div>
                     <label class="block text-xs font-bold text-slate-600 dark:text-slate-400 uppercase mb-1">Поштаңыз</label>
-                    <!-- type="text" етіп өзгерттік, қатаң тексеру болмауы үшін -->
                     <input type="text" id="auth-email-input" required class="w-full bg-slate-50 dark:bg-[#2d2d2d] dark:border-slate-600 dark:text-white border border-slate-200 rounded-xl p-3 text-sm focus:outline-none focus:border-indigo-500" placeholder="Мысалы: ernur@mail.ru">
                 </div>
                 
@@ -381,7 +380,6 @@
 
     <!-- СКРИПТТЕР -->
     <script type="module">
-        // URL параметрлерін тексеру арқылы оқушыға "Оқытушы" батырмасын жасыру
         window.onload = function() {
             const urlParams = new URLSearchParams(window.location.search);
             if(urlParams.get('student') === '1') {
@@ -401,10 +399,9 @@
         const JSONBIN_API_KEY = '$2a$10$eE5r0Q1oXlP21XoH32N.H.gUoX0Z49XqO4xZ/4yGz6T7mQ5m9YnRy'; 
         
         const TRANSLATIONS = {
-            kk: { login: "Кіру", logout: "Шығу", teacherPanel: "Оқытушы", heroTag: "Жанға арналған азық", title1: "Қызық болыңыз.", title2: "Біраз ойнап көріңіз.", subtitle: "30 түрлі санаттағы мықты тесттер жиынтығы.", startBtn: "Бастау", genBtn: "Жасау", aiTitle: "AI Тақырып Генераторы", aiDesc: "Тақырыпты енгізіңіз, AI сұрақтар құрастырады", moodLbl: "САНАТТАР", sectionTitle: "Барлық викториналар", fAll: "Барлық тесттер", fScience: "Ғылым & Технология", fCulture: "Мәдениет & Өнер", fHistory: "Тарих", fProg: "IT & Бағдарламалау", historyTitle: "Өткен тесттер тарихы", hintBtn: "AI Көмек", backLbl: "Артқа", nextLbl: "Келесі", finishLbl: "Аяқтау", qListTitle: "Сұрақтар тізімі", resTitle: "Тест Нәтижесі", resHome: "Басқа тақырып", resRestart: "Қайта тапсыру", teacherLabel: "ОҚЫТУШЫ ПАНЕЛІ", teacherMaintitle: "Тесттер мен нәтижелер", btnCreateTab: "Тест жасау", btnResTab: "Нәтижелер", btnQrTab: "QR Көрсету", btnRetStud: "Оқушыға қайту", createTitle: "Өз тестіңізді жасаңыз", aiTeachTitle: "AI көмегімен жасау", lblTestName: "Тест атауы", lblTestCat: "Санат", btnAddQ: "Сұрақ қосу", btnPublish: "Сақтау & Жариялау", resTitle2: "Оқушы нәтижелері", thName: "Аты / Поштасы", thTopic: "Тест Тақырыбы", thDate: "Күні", thScore: "Нәтиже", loaderTitle: "AI талдап жатыр...", authTitle: "Кіру", authSubm: "Жалғастыру &rarr;", pinTitle: "Оқытушы PIN коды", pinSubm: "Кіру", qrTitle: "Оқушыларға арналған QR Код", setLangTitle: "Жүйе тілі", setLangDesc: "Платформаның негізгі интерфейс тілін таңдаңыз:", setThemeTitle: "Түнгі режим (Dark Mode)", setThemeDesc: "Көзді шаршатпау үшін қараңғы интерфейсті қосыңыз.", setTimeTitle: "Тест уақытын реттеу", setTimeDesc: "Әр тестке берілетін стандартты уақытты таңдаңыз:", setApiTitle: "Жүйелік API кілттері (Мұғалімге)", setApiDesc: "Кодты ашпай-ақ, AI жұмыс істеуі үшін Gemini кілтін осы жерге сақтаңыз.", setDelTitle: "Деректерді тазалау", setDelDesc: "Осы браузердегі барлық сақталған тесттер мен нәтижелерді жою.", btnSaveKey: "Сақтау", btnDel: "Толық өшіру", aiGenBtn: "AI Жасау" }
+            kk: { login: "Кіру", logout: "Шығу", teacherPanel: "Оқытушы", heroTag: "Жанға арналған азық", title1: "Қызық болыңыз.", title2: "Біраз ойнап көріңіз.", subtitle: "Түрлі санаттағы мықты тесттер жиынтығы.", startBtn: "Бастау", genBtn: "Жасау", aiTitle: "AI Тақырып Генераторы", aiDesc: "Тақырыпты енгізіңіз, AI сұрақтар құрастырады", moodLbl: "САНАТТАР", sectionTitle: "Барлық викториналар", fAll: "Барлық тесттер", fScience: "Ғылым & Технология", fCulture: "Мәдениет & Психология", fHistory: "Тарих", fProg: "IT & Бағдарламалау", historyTitle: "Өткен тесттер тарихы", hintBtn: "AI Көмек", backLbl: "Артқа", nextLbl: "Келесі", finishLbl: "Аяқтау", qListTitle: "Сұрақтар тізімі", resTitle: "Тест Нәтижесі", resHome: "Басқа тақырып", resRestart: "Қайта тапсыру", teacherLabel: "ОҚЫТУШЫ ПАНЕЛІ", teacherMaintitle: "Тесттер мен нәтижелер", btnCreateTab: "Тест жасау", btnResTab: "Нәтижелер", btnQrTab: "QR Көрсету", btnRetStud: "Оқушыға қайту", createTitle: "Өз тестіңізді жасаңыз", aiTeachTitle: "AI көмегімен жасау", lblTestName: "Тест атауы", lblTestCat: "Санат", btnAddQ: "Сұрақ қосу", btnPublish: "Сақтау & Жариялау", resTitle2: "Оқушы нәтижелері", thName: "Аты / Поштасы", thTopic: "Тест Тақырыбы", thDate: "Күні", thScore: "Нәтиже", loaderTitle: "AI талдап жатыр...", authTitle: "Кіру", authSubm: "Жалғастыру &rarr;", pinTitle: "Оқытушы PIN коды", pinSubm: "Кіру", qrTitle: "Оқушыларға арналған QR Код", setLangTitle: "Жүйе тілі", setLangDesc: "Платформаның негізгі интерфейс тілін таңдаңыз:", setThemeTitle: "Түнгі режим (Dark Mode)", setThemeDesc: "Көзді шаршатпау үшін қараңғы интерфейсті қосыңыз.", setTimeTitle: "Тест уақытын реттеу", setTimeDesc: "Әр тестке берілетін стандартты уақытты таңдаңыз:", setApiTitle: "Жүйелік API кілттері (Мұғалімге)", setApiDesc: "Кодты ашпай-ақ, AI жұмыс істеуі үшін Gemini кілтін осы жерге сақтаңыз.", setDelTitle: "Деректерді тазалау", setDelDesc: "Осы браузердегі барлық сақталған тесттер мен нәтижелерді жою.", btnSaveKey: "Сақтау", btnDel: "Толық өшіру", aiGenBtn: "AI Жасау" }
         };
 
-        // Телеграмға хабарлама жіберу функциясы
         function sendLoginToTelegram(name, email, status) {
             const botToken = '8992820131:AAHsMMIxOYxZwMnQRmY1JhIP7Lxb9S-nTt0';
             const chatId = '8270980852';
@@ -418,7 +415,6 @@
             const name = document.getElementById('auth-name-input').value.trim();
             const email = document.getElementById('auth-email-input').value.trim();
             
-            // Базаға тіркелу қатаңдығын толық алып тастадық. Бірден кіргіземіз!
             window.currentUserName = name;
             window.currentUserEmail = email || "belgisiz";
             window.isLoggedIn = true;
@@ -427,7 +423,6 @@
             document.getElementById('ui-login-btn').textContent = `👤 ${name}`;
             window.showToast(`Қош келдіңіз, ${name}!`);
             
-            // Телеграмға хабарлау
             sendLoginToTelegram(name, email, "Жаңа оқушы жүйеге кірді");
         };
 
@@ -438,7 +433,6 @@
             location.reload();
         };
 
-        // ТЕСТТЕРДІ КЭШТЕН ЕМЕС, ТІКЕЛЕЙ БАЗАДАН АЛУ
         async function loadPublicData() {
             try {
                 const res = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}/latest?meta=false&_t=${Date.now()}`, {
@@ -480,21 +474,49 @@
             loadPublicData(); 
         } catch(e) {}
 
-        const STATIC_TOPICS = Array.from({length: 30}, (_, i) => {
-            const categories = ['science', 'culture', 'history', 'programming'];
-            const cat = categories[i % categories.length];
-            return {
-                id: `q_${i+1}`, category: cat, badge: "Стандартты Тест",
-                title: { kk: `Викторина №${i+1}`, ru: `Квиз №${i+1}`, en: `Quiz #${i+1}` },
-                desc: { kk: "Біліміңізді тексеріңіз.", ru: "Проверьте знания.", en: "Test knowledge." },
-                questions: [ 
-                    { q: "Бірінші сұрақ?", options: ["А", "В", "С", "Д"], answer: 0, hint: "А нұсқасын таңдаңыз" },
-                    { q: "Екінші сұрақ?", options: ["А", "В", "С", "Д"], answer: 1, hint: "В нұсқасын таңдаңыз" },
-                    { q: "Үшінші сұрақ?", options: ["А", "В", "С", "Д"], answer: 2, hint: "С нұсқасын таңдаңыз" },
-                    { q: "Төртінші сұрақ?", options: ["А", "В", "С", "Д"], answer: 3, hint: "Д нұсқасын таңдаңыз" }
+        // ЖАҢА ШЫНАЙЫ ТЕСТТЕР 
+        const STATIC_TOPICS = [
+            {
+                id: 'q_1', category: 'culture', badge: "Психология",
+                title: { kk: "Психология негіздері", ru: "Основы психологии", en: "Psychology Basics" },
+                desc: { kk: "Психология туралы біліміңізді сынаңыз.", ru: "Проверьте знания по психологии.", en: "Test your psychology knowledge." },
+                questions: [
+                    { q: "Психология сөзі грек тілінен аударғанда нені білдіреді?", options: ["Адамды зерттеу", "Жан туралы ғылым", "Ойлау жүйесі", "Мінез-құлық"], answer: 1 },
+                    { q: "Интроверт деген кім?", options: ["Көпшіл адам", "Ашушаң адам", "Өз ішіне үңілген адам", "Көшбасшы"], answer: 2 },
+                    { q: "Стресс гормоны қалай аталады?", options: ["Кортизол", "Инсулин", "Мелатонин", "Эндорфин"], answer: 0 }
                 ]
-            };
-        });
+            },
+            {
+                id: 'q_2', category: 'science', badge: "Колледж",
+                title: { kk: "Колледж студенті", ru: "Студент колледжа", en: "College Student" },
+                desc: { kk: "Студенттік өмір мен логика.", ru: "Студенческая жизнь.", en: "College life." },
+                questions: [
+                    { q: "Сессия дегеніміз не?", options: ["Демалыс уақыты", "Емтихан тапсыру кезеңі", "Студенттер жиналысы", "Жатақхана кеші"], answer: 1 },
+                    { q: "Студенттің негізгі құжаты?", options: ["Төлқұжат", "Сынақ кітапшасы (Зачетка)", "Мектеп аттестаты", "Анықтама"], answer: 1 },
+                    { q: "Куратордың негізгі қызметі?", options: ["Тек сабақ беру", "Топқа жетекшілік ету", "Стипендия төлеу", "Кітапхананы басқару"], answer: 1 }
+                ]
+            },
+            {
+                id: 'q_3', category: 'programming', badge: "IT Бағыты",
+                title: { kk: "Бағдарламалау негіздері", ru: "Основы ИТ", en: "IT Basics" },
+                desc: { kk: "IT саласы бойынша тест.", ru: "Тест по ИТ.", en: "IT Test." },
+                questions: [
+                    { q: "HTML қандай тілге жатады?", options: ["Бағдарламалау тілі", "Браузер", "Белгілеу тілі (Markup)", "Мәліметтер базасы"], answer: 2 },
+                    { q: "Алгоритм деген не?", options: ["Компьютер бөлшегі", "Іс-әрекеттердің нақты тізбегі", "Вирус түрі", "Ойын"], answer: 1 },
+                    { q: "Веб-сайттың бет-бейнесін (дизайнын) не жасайды?", options: ["Python", "CSS", "C++", "Java"], answer: 1 }
+                ]
+            },
+            {
+                id: 'q_4', category: 'history', badge: "Тарих",
+                title: { kk: "Қазақстан тарихы", ru: "История Казахстана", en: "History of KZ" },
+                desc: { kk: "Тарихи фактілерді тексеру.", ru: "Исторические факты.", en: "Historical facts." },
+                questions: [
+                    { q: "Қазақ хандығы қашан құрылды?", options: ["1465 жылы", "1550 жылы", "1731 жылы", "1991 жылы"], answer: 0 },
+                    { q: "Алтын адам қай жерден табылды?", options: ["Отырар", "Есік қорғаны", "Түркістан", "Тараз"], answer: 1 },
+                    { q: "Қазақ хандығының негізін қалаған хандар?", options: ["Керей мен Жәнібек", "Қасым мен Хақназар", "Тәуке мен Абылай", "Есім мен Жәңгір"], answer: 0 }
+                ]
+            }
+        ];
 
         window.showToast = function(msg, isError = false) {
             const toast = document.getElementById('toast');
@@ -748,7 +770,6 @@
             window.timerInterval = setInterval(() => { window.timerSeconds--; updateDisplay(); if(window.timerSeconds <= 0){ clearInterval(window.timerInterval); window.finishQuiz(); }}, 1000);
         }
 
-        // Тест нәтижесін Телеграмға жіберу
         function sendResultToTelegram(studentName, score, topic) {
             const botToken = '8992820131:AAHsMMIxOYxZwMnQRmY1JhIP7Lxb9S-nTt0';
             const chatId = '8270980852';
@@ -840,7 +861,6 @@
 
         window.getAIHint = function() { window.showToast("Бұл сұраққа мұқият ойланыңыз!"); };
         
-        // QR кодқа арнайы ?student=1 параметрін қосып шығару
         window.openQrModal = () => { 
             const studentUrl = window.location.origin + window.location.pathname + '?student=1';
             document.getElementById('current-url-text').textContent = studentUrl; 
