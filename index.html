@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="google-site-verification" content="edIo1YLKLFHmGHRpXTTKL5uAjZeAjMC1ul89PJ8zzaA" />
     <title>Quizly — Шығармашылық пен білім платформасы</title>
     <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;0,600;0,700;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -474,7 +475,6 @@
             loadPublicData(); 
         } catch(e) {}
 
-        // ЖАҢА ШЫНАЙЫ ТЕСТТЕР 
         const STATIC_TOPICS = [
             {
                 id: 'q_1', category: 'culture', badge: "Психология",
@@ -847,7 +847,7 @@
                             <input type="text" class="teacher-opt-0 w-full bg-white border border-slate-200 rounded-xl p-2.5 text-xs" value="${qObj.options[0]}">
                             <input type="text" class="teacher-opt-1 w-full bg-white border border-slate-200 rounded-xl p-2.5 text-xs" value="${qObj.options[1]}">
                             <input type="text" class="teacher-opt-2 w-full bg-white border border-slate-200 rounded-xl p-2.5 text-xs" value="${qObj.options[2]}">
-                            <input type="text" class="teacher-opt-3 w-full bg-white border border-slate-200 rounded-xl p-2.5 text-xs" value="${qObj.options[3]}">
+                            <input type="text" class="teacher-opt-3 w-full bg-white border border-slate-200 rounded-xl p-3 text-xs" value="${qObj.options[3]}">
                         </div>
                         <div class="flex items-center gap-2 pt-1"><label class="text-xs font-bold text-slate-600">Дұрыс жауап (0-3):</label><input type="number" min="0" max="3" value="${qObj.answer}" class="teacher-ans bg-white border border-slate-200 rounded-lg p-1.5 text-xs w-16 text-center"></div>
                     `;
