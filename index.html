@@ -343,7 +343,8 @@
                 </div>
                 <div>
                     <label class="block text-xs font-bold text-slate-600 dark:text-slate-400 uppercase mb-1">Поштаңыз</label>
-                    <input type="email" id="auth-email-input" required class="w-full bg-slate-50 dark:bg-[#2d2d2d] dark:border-slate-600 dark:text-white border border-slate-200 rounded-xl p-3 text-sm focus:outline-none focus:border-indigo-500" placeholder="Мысалы: ernur@mail.ru">
+                    <!-- type="text" етіп өзгерттік, қатаң тексеру болмауы үшін -->
+                    <input type="text" id="auth-email-input" required class="w-full bg-slate-50 dark:bg-[#2d2d2d] dark:border-slate-600 dark:text-white border border-slate-200 rounded-xl p-3 text-sm focus:outline-none focus:border-indigo-500" placeholder="Мысалы: ernur@mail.ru">
                 </div>
                 
                 <button type="submit" class="w-full btn-indigo py-3.5 mt-2 text-sm shadow-md text-center cursor-pointer">Жалғастыру &rarr;</button>
@@ -378,10 +379,8 @@
         <i class="fa-solid fa-circle-check text-emerald-400" id="toast-icon"></i><span id="toast-message">Хабарлама</span>
     </div>
 
-    <!-- SUPABASE БАЙЛАНЫСЫ -->
+    <!-- СКРИПТТЕР -->
     <script type="module">
-        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
-
         // URL параметрлерін тексеру арқылы оқушыға "Оқытушы" батырмасын жасыру
         window.onload = function() {
             const urlParams = new URLSearchParams(window.location.search);
@@ -389,11 +388,6 @@
                 document.getElementById('ui-teacher-panel-btn-container').style.display = 'none';
             }
         };
-
-        const SUPABASE_URL = 'https://tobsozpdoyvgjfmxswnn.supabase.co';
-        const SUPABASE_ANON_KEY = 'sb_publishable_BdR3JYk1dSG-i7T29wxxYQ_KmftNhbF';
-        
-        const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         window.currentLang = 'kk';
         window.currentRole = 'student';
@@ -410,79 +404,46 @@
             kk: { login: "Кіру", logout: "Шығу", teacherPanel: "Оқытушы", heroTag: "Жанға арналған азық", title1: "Қызық болыңыз.", title2: "Біраз ойнап көріңіз.", subtitle: "30 түрлі санаттағы мықты тесттер жиынтығы.", startBtn: "Бастау", genBtn: "Жасау", aiTitle: "AI Тақырып Генераторы", aiDesc: "Тақырыпты енгізіңіз, AI сұрақтар құрастырады", moodLbl: "САНАТТАР", sectionTitle: "Барлық викториналар", fAll: "Барлық тесттер", fScience: "Ғылым & Технология", fCulture: "Мәдениет & Өнер", fHistory: "Тарих", fProg: "IT & Бағдарламалау", historyTitle: "Өткен тесттер тарихы", hintBtn: "AI Көмек", backLbl: "Артқа", nextLbl: "Келесі", finishLbl: "Аяқтау", qListTitle: "Сұрақтар тізімі", resTitle: "Тест Нәтижесі", resHome: "Басқа тақырып", resRestart: "Қайта тапсыру", teacherLabel: "ОҚЫТУШЫ ПАНЕЛІ", teacherMaintitle: "Тесттер мен нәтижелер", btnCreateTab: "Тест жасау", btnResTab: "Нәтижелер", btnQrTab: "QR Көрсету", btnRetStud: "Оқушыға қайту", createTitle: "Өз тестіңізді жасаңыз", aiTeachTitle: "AI көмегімен жасау", lblTestName: "Тест атауы", lblTestCat: "Санат", btnAddQ: "Сұрақ қосу", btnPublish: "Сақтау & Жариялау", resTitle2: "Оқушы нәтижелері", thName: "Аты / Поштасы", thTopic: "Тест Тақырыбы", thDate: "Күні", thScore: "Нәтиже", loaderTitle: "AI талдап жатыр...", authTitle: "Кіру", authSubm: "Жалғастыру &rarr;", pinTitle: "Оқытушы PIN коды", pinSubm: "Кіру", qrTitle: "Оқушыларға арналған QR Код", setLangTitle: "Жүйе тілі", setLangDesc: "Платформаның негізгі интерфейс тілін таңдаңыз:", setThemeTitle: "Түнгі режим (Dark Mode)", setThemeDesc: "Көзді шаршатпау үшін қараңғы интерфейсті қосыңыз.", setTimeTitle: "Тест уақытын реттеу", setTimeDesc: "Әр тестке берілетін стандартты уақытты таңдаңыз:", setApiTitle: "Жүйелік API кілттері (Мұғалімге)", setApiDesc: "Кодты ашпай-ақ, AI жұмыс істеуі үшін Gemini кілтін осы жерге сақтаңыз.", setDelTitle: "Деректерді тазалау", setDelDesc: "Осы браузердегі барлық сақталған тесттер мен нәтижелерді жою.", btnSaveKey: "Сақтау", btnDel: "Толық өшіру", aiGenBtn: "AI Жасау" }
         };
 
-        supabase.auth.onAuthStateChange((event, session) => {
-            if (session) {
-                window.currentUserName = session.user.user_metadata?.full_name || session.user.email.split('@')[0];
-                window.currentUserEmail = session.user.email;
-                window.isLoggedIn = true;
-                document.getElementById('auth-modal').classList.add('hidden');
-                document.getElementById('ui-login-btn').textContent = `👤 ${window.currentUserName}`;
-            } else {
-                window.isLoggedIn = false;
-                if(window.currentRole !== 'teacher') {
-                    document.getElementById('auth-modal').classList.remove('hidden');
-                    document.getElementById('ui-login-btn').textContent = TRANSLATIONS[window.currentLang].login;
-                }
-            }
-        });
-
         // Телеграмға хабарлама жіберу функциясы
         function sendLoginToTelegram(name, email, status) {
             const botToken = '8992820131:AAHsMMIxOYxZwMnQRmY1JhIP7Lxb9S-nTt0';
             const chatId = '8270980852';
-            const text = `🔔 ${status}!\n👤 Аты: ${name}\n📧 Поштасы: ${email}`;
+            const text = `🔔 ${status}!\n👤 Аты: ${name}\n📧 Поштасы/Нік: ${email}`;
             const url = `https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(text)}`;
             fetch(url).catch(e => console.error("Telegram қатесі:", e));
         }
 
-        window.handleAuthSubmit = async function(e) {
+        window.handleAuthSubmit = function(e) {
             e.preventDefault();
             const name = document.getElementById('auth-name-input').value.trim();
             const email = document.getElementById('auth-email-input').value.trim();
             
-            // Жүйе өзі автоматты түрде қоятын құпия сөз (оқушы оны білмейді де, жазбайды да)
-            const password = "QuizlySecretPassword123!"; 
-
-            // Кіруге тырысу
-            let { data, error } = await supabase.auth.signInWithPassword({
-                email: email,
-                password: password
-            });
-
-            // Егер ондай аккаунт жоқ болса немесе қате болса, жаңадан тіркейміз
-            if (error) {
-                let signUpRes = await supabase.auth.signUp({
-                    email: email,
-                    password: password,
-                    options: { data: { full_name: name } }
-                });
-                
-                if (signUpRes.error) {
-                    window.showToast("Жүйеге қосылу қатесі: " + signUpRes.error.message, true);
-                } else {
-                    window.showToast(`Қош келдіңіз, ${name}!`);
-                    document.getElementById('auth-modal').classList.add('hidden');
-                    sendLoginToTelegram(name, email, "Жаңа оқушы тіркелді");
-                }
-            } else {
-                const userName = data.user.user_metadata?.full_name || name;
-                window.showToast("Қайта оралғаныңызға қуаныштымыз, " + userName + "!");
-                document.getElementById('auth-modal').classList.add('hidden');
-                sendLoginToTelegram(userName, email, "Оқушы жүйеге кірді");
-            }
+            // Базаға тіркелу қатаңдығын толық алып тастадық. Бірден кіргіземіз!
+            window.currentUserName = name;
+            window.currentUserEmail = email || "belgisiz";
+            window.isLoggedIn = true;
+            
+            document.getElementById('auth-modal').classList.add('hidden');
+            document.getElementById('ui-login-btn').textContent = `👤 ${name}`;
+            window.showToast(`Қош келдіңіз, ${name}!`);
+            
+            // Телеграмға хабарлау
+            sendLoginToTelegram(name, email, "Жаңа оқушы жүйеге кірді");
         };
 
-        window.logoutUser = async function() {
-            await supabase.auth.signOut();
+        window.logoutUser = function() {
+            window.isLoggedIn = false;
+            window.currentUserName = '';
+            window.currentUserEmail = '';
             location.reload();
         };
 
-        // ТЕСТТЕРДІ КЭШТЕН ЕМЕС, ТІКЕЛЕЙ БАЗАДАН АЛУ (Басқа телефондарда бірден көрінуі үшін)
+        // ТЕСТТЕРДІ КЭШТЕН ЕМЕС, ТІКЕЛЕЙ БАЗАДАН АЛУ
         async function loadPublicData() {
             try {
                 const res = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}/latest?meta=false&_t=${Date.now()}`, {
                     headers: { 'X-Master-Key': JSONBIN_API_KEY, 'Cache-Control': 'no-cache' },
-                    cache: 'no-store' // Браузерге есте сақтамауды бұйырамыз
+                    cache: 'no-store' 
                 });
                 const data = await res.json();
                 if (data) {
