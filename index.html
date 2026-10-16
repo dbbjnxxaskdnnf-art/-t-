@@ -35,7 +35,6 @@
         .topic-card:hover { transform: translateY(-4px); box-shadow: 0 16px 32px rgba(42, 63, 216, 0.08); }
         .quiz-card-box { background: #ffffff; border: 1px solid rgba(0, 0, 0, 0.06); border-radius: 28px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.04); }
         
-        /* Kahoot стильді жауап батырмалары */
         .option-item { background: #f8fafc; border: 2px solid #e2e8f0; border-radius: 16px; transition: all 0.2s ease; }
         .option-item:hover { border-color: #2a3fd8; background: rgba(42, 63, 216, 0.03); }
         .option-item.selected { border-color: #2a3fd8; background: rgba(42, 63, 216, 0.08); color: #1e293b; font-weight: 600; }
@@ -108,7 +107,6 @@
             </button>
             <button class="text-xs font-bold text-slate-500 hover:text-slate-800 px-2 py-1 transition" id="ui-logout-btn" onclick="logoutUser()" data-i18n="logoutBtn">Шығу</button>
             
-            <!-- ТАЙМЕР -->
             <div class="hidden bg-rose-100 border border-rose-200 px-4 py-1.5 rounded-full text-xs font-bold text-rose-600 shadow-sm flex items-center gap-2 ml-2" id="timer-display">
                 <i class="fa-regular fa-clock fa-spin"></i> <span id="timer-text">00:30</span>
             </div>
@@ -233,19 +231,14 @@
                 </div>
                 <div class="flex justify-between items-center mb-4">
                     <span class="text-xs font-bold text-indigo-600 uppercase tracking-wider" id="question-index-text">Сұрақ 1 / 5</span>
-                    <button class="bg-amber-500/10 border border-amber-500/30 text-amber-700 px-3.5 py-1.5 rounded-full text-xs font-bold flex items-center gap-1.5 transition cursor-pointer" onclick="getAIHint()">
-                        <i class="fa-regular fa-lightbulb"></i> <span data-i18n="aiHintBtn">AI Көмек</span>
-                    </button>
                 </div>
                 
                 <h2 class="text-xl md:text-2xl font-bold text-slate-900 mb-6 leading-relaxed text-center" id="question-text">...</h2>
                 
-                <!-- KAHOOT СТИЛІНДЕГІ СУРЕТ ОРНЫ -->
                 <div class="kahoot-image-container hidden" id="image-wrapper">
                     <img id="question-image" src="" alt="Question Image">
                 </div>
                 
-                <div id="hint-container" class="hidden bg-amber-50 border-l-4 border-amber-400 p-4 rounded-r-xl mb-6 text-amber-900 text-sm"></div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-8" id="options-container"></div>
                 <div class="flex justify-end gap-3">
                     <button class="btn-indigo flex items-center gap-2 text-sm shadow-md cursor-pointer hidden" id="btn-next" onclick="nextQuestion()">
@@ -271,7 +264,6 @@
                 <div class="flex items-center gap-3">
                     <button class="bg-indigo-600 text-white px-5 py-2.5 rounded-full text-xs font-bold shadow-md cursor-pointer" onclick="switchTeacherTab('create')"><i class="fa-solid fa-plus mr-1"></i> <span data-i18n="btnCreateTab">Тест жасау</span></button>
                     <button class="bg-white border border-slate-200 text-slate-700 px-5 py-2.5 rounded-full text-xs font-bold cursor-pointer" onclick="switchTeacherTab('results')"><i class="fa-solid fa-chart-user mr-1"></i> <span data-i18n="btnResTab">Нәтижелер</span></button>
-                    <!-- QR БАТЫРМАСЫ ҚОСЫЛДЫ -->
                     <button class="bg-amber-500 text-white px-5 py-2.5 rounded-full text-xs font-bold shadow-md cursor-pointer" onclick="openQrModal()"><i class="fa-solid fa-qrcode mr-1"></i> QR Көрсету</button>
                     <button class="text-xs font-bold text-slate-500 underline ml-2 cursor-pointer" onclick="switchRole('student')" data-i18n="btnReturnStudent">Оқушыға қайту</button>
                 </div>
@@ -284,7 +276,6 @@
                     <h4 class="font-bold text-indigo-900 dark:text-indigo-400 mb-2 flex items-center gap-2 text-lg"><i class="fa-solid fa-wand-magic-sparkles"></i> <span data-i18n="teacherAiTitle">AI көмегімен жасау</span></h4>
                     <div class="flex flex-col md:flex-row gap-3">
                         <input type="text" id="teacher-ai-topic" class="flex-1 bg-white border border-indigo-200 rounded-xl p-3 text-sm focus:outline-none" placeholder="Тақырыпты жазыңыз...">
-                        <!-- СУРЕТ ЖҮКТЕУ (ҚАТЕЛІК ТҮЗЕТІЛДІ) -->
                         <div class="relative w-full md:w-auto">
                             <input type="file" id="teacher-ai-image" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" title="Сурет жүктеу" onchange="document.getElementById('file-name').textContent = this.files[0]?.name || 'Сурет таңдау'">
                             <div class="bg-white border border-indigo-200 rounded-xl p-3 text-sm text-center flex items-center justify-center gap-2 text-indigo-600 font-semibold cursor-pointer">
@@ -414,7 +405,6 @@
 
     <!-- СКРИПТТЕР -->
     <script type="module">
-        // --- 1. КӨПТІЛДІЛІК (СӨЗДІК) ---
         const translations = {
             kk: {
                 loginBtn: "Кіру", teacherBtn: "Оқытушы", logoutBtn: "Шығу", heroTag: "Жанға арналған азық", 
@@ -479,13 +469,12 @@
             localStorage.setItem('quizly_lang', lang);
         };
 
-        // --- 2. НЕГІЗГІ ЛОГИКА ---
         window.onload = function() {
             const urlParams = new URLSearchParams(window.location.search);
             if(urlParams.get('student') === '1') document.getElementById('ui-teacher-panel-btn-container').style.display = 'none';
             const savedLang = localStorage.getItem('quizly_lang');
             if(savedLang) { document.getElementById('lang-switch').value = savedLang; window.changeLanguage(savedLang); }
-            if(!window.isLoggedIn) setTimeout(window.openAuthModal, 1500); // Автоматты тіркелу ашылады
+            if(!window.isLoggedIn) setTimeout(window.openAuthModal, 1500); 
         };
 
         window.currentRole = 'student';
@@ -493,9 +482,7 @@
         window.currentUserEmail = localStorage.getItem('quizly_email') || '';
         window.isLoggedIn = !!window.currentUserName;
 
-        if (window.isLoggedIn) {
-            document.getElementById('ui-login-btn').textContent = `👤 ${window.currentUserName}`;
-        }
+        if (window.isLoggedIn) document.getElementById('ui-login-btn').textContent = `👤 ${window.currentUserName}`;
 
         let firebaseTeacherQuizzes = []; let firebaseStudentResults = [];
 
@@ -543,7 +530,7 @@
                 const res = await fetch(`${firebaseUrl}/quizly_data.json?t=${Date.now()}`);
                 const data = await res.json();
                 if (data) { firebaseTeacherQuizzes = data.quizzes || []; firebaseStudentResults = data.results || []; }
-            } catch(e) { console.error(e); }
+            } catch(e) {}
             renderTopics(); 
         }
 
@@ -569,7 +556,7 @@
             const toast = document.getElementById('toast'); document.getElementById('toast-message').textContent = msg;
             document.getElementById('toast-icon').className = isErr ? "fa-solid fa-triangle-exclamation text-rose-400" : "fa-solid fa-circle-check text-emerald-400";
             toast.classList.remove('-translate-y-20', 'opacity-0'); toast.classList.add('translate-y-0', 'opacity-100');
-            setTimeout(() => { toast.classList.remove('translate-y-0', 'opacity-100'); toast.classList.add('-translate-y-20', 'opacity-0'); }, 3000);
+            setTimeout(() => { toast.classList.remove('translate-y-0', 'opacity-100'); toast.classList.add('-translate-y-20', 'opacity-0'); }, 4000);
         };
 
         window.toggleTheme = () => { const isD = document.getElementById('theme-toggle').checked; if(isD) document.body.classList.add('dark-mode'); else document.body.classList.remove('dark-mode'); window.appSettings.theme = isD?'dark':'light'; saveSettings(); };
@@ -582,13 +569,8 @@
         window.switchView = (v) => { 
             ['topics', 'quiz', 'teacher', 'results', 'settings'].forEach(x => document.getElementById(`view-${x}`).classList.add('hidden')); 
             document.getElementById(`view-${v}`).classList.remove('hidden'); 
-            
-            if(v !== 'quiz') {
-                clearInterval(window.timerInterval);
-                document.getElementById('timer-display').classList.add('hidden');
-            } else {
-                document.getElementById('timer-display').classList.remove('hidden');
-            }
+            if(v !== 'quiz') { clearInterval(window.timerInterval); document.getElementById('timer-display').classList.add('hidden'); } 
+            else document.getElementById('timer-display').classList.remove('hidden');
             if(v === 'topics') loadPublicData(); 
         };
         
@@ -622,7 +604,6 @@
             else{ document.getElementById('teacher-tab-create').classList.add('hidden'); document.getElementById('teacher-tab-results').classList.remove('hidden'); loadPublicData().then(()=>renderStudentResults()); }
         };
 
-        // --- КӨЛЕМДІ СУРЕТТІ АВТОМАТТЫ ТҮРДЕ КІШІРЕЙТУ (КОМПРЕССИЯ) ---
         function compressImage(file) {
             return new Promise((resolve, reject) => {
                 const reader = new FileReader();
@@ -633,34 +614,25 @@
                     img.onload = () => {
                         const canvas = document.createElement('canvas');
                         let width = img.width; let height = img.height;
-                        const maxWidth = 500; // Жоғары сапалы, бірақ жеңіл (500px)
-                        if (width > maxWidth) {
-                            height = Math.round((height * maxWidth) / width);
-                            width = maxWidth;
-                        }
+                        const maxWidth = 500;
+                        if (width > maxWidth) { height = Math.round((height * maxWidth) / width); width = maxWidth; }
                         canvas.width = width; canvas.height = height;
                         const ctx = canvas.getContext('2d');
                         ctx.drawImage(img, 0, 0, width, height);
-                        // Сапаны 0.7 етіп сығу (AI қате бермеуі үшін)
                         const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
-                        resolve({
-                            rawBase64: dataUrl.split(',')[1],
-                            fullUrl: dataUrl,
-                            mimeType: 'image/jpeg'
-                        });
+                        resolve({ rawBase64: dataUrl.split(',')[1], fullUrl: dataUrl, mimeType: 'image/jpeg' });
                     };
                 };
                 reader.onerror = error => reject(error);
             });
         }
 
-        // ҚОЛМЕН ЖАСАҒАНДА СУРЕТ ҚОСУ БАТЫРМАСЫ
         window.handleManualImageUpload = async function(inputElem) {
             if(inputElem.files.length > 0) {
                 window.showToast("Сурет өңделуде...");
                 try {
                     const resized = await compressImage(inputElem.files[0]);
-                    inputElem.previousElementSibling.value = resized.fullUrl; // Сурет сілтемесін жасырын/ашық Input-қа салады
+                    inputElem.previousElementSibling.value = resized.fullUrl;
                     window.showToast("Сурет жүктелді!");
                 } catch(e) { window.showToast("Сурет қатесі", true); }
             }
@@ -674,10 +646,7 @@
                 <input type="text" class="teacher-q-prompt w-full bg-white border border-slate-200 rounded-xl p-3 text-sm focus:outline-none" placeholder="Сұрақ мәтіні...">
                 <div class="flex gap-2 items-center">
                     <input type="text" class="teacher-q-image flex-1 bg-white border border-slate-200 rounded-xl p-2 text-xs" placeholder="(Қосымша) Суреттің URL сілтемесін қойыңыз...">
-                    <div class="relative w-28">
-                        <input type="file" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" onchange="handleManualImageUpload(this)">
-                        <div class="bg-indigo-100 text-indigo-700 text-xs font-bold text-center py-2 rounded-lg cursor-pointer">+ Фото таңдау</div>
-                    </div>
+                    <div class="relative w-28"><input type="file" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" onchange="handleManualImageUpload(this)"><div class="bg-indigo-100 text-indigo-700 text-xs font-bold text-center py-2 rounded-lg cursor-pointer">+ Фото</div></div>
                 </div>
                 <div class="grid grid-cols-2 gap-2"><input class="teacher-opt-0 w-full bg-white border rounded-xl p-2.5 text-xs"><input class="teacher-opt-1 w-full bg-white border rounded-xl p-2.5 text-xs"><input class="teacher-opt-2 w-full bg-white border rounded-xl p-2.5 text-xs"><input class="teacher-opt-3 w-full bg-white border rounded-xl p-2.5 text-xs"></div>
                 <label class="text-xs">Дұрыс жауап (0-3):</label><input type="number" min="0" max="3" value="0" class="teacher-ans bg-white border rounded-lg p-1.5 text-xs w-16">
@@ -706,10 +675,7 @@
             allTopics.forEach(o => {
                 if(window.currentFilter && window.currentFilter!=='all' && o.category!==window.currentFilter) return;
                 const d = document.createElement('div'); d.className = 'topic-card p-6 cursor-pointer flex flex-col justify-between border-indigo-200 bg-indigo-50/40 dark:bg-[#1e1e1e] min-h-[220px]';
-                d.onclick = () => {
-                    if(!window.isLoggedIn) { window.openAuthModal(); return; }
-                    startQuiz(o);
-                };
+                d.onclick = () => { if(!window.isLoggedIn) { window.openAuthModal(); return; } startQuiz(o); };
                 d.innerHTML = `<div><div class="text-xs font-bold text-indigo-600 mb-2">${o.questions.length} сұрақ</div><h3 class="serif-heading font-bold text-2xl text-slate-900 mb-2">${o.title}</h3></div><div class="flex items-center justify-between mt-4"><span class="text-xs font-bold text-indigo-600">Бастау &rarr;</span><div class="w-9 h-9 rounded-full bg-slate-100 flex items-center justify-center text-slate-700 text-sm"><i class="fa-solid fa-play"></i></div></div>`;
                 g.appendChild(d);
             });
@@ -722,7 +688,7 @@
         function startQuiz(q) { 
             window.currentQuiz = q; window.currentQuestionIdx = 0; window.quizScore = 0; 
             window.userAnswers = new Array(q.questions.length).fill(null); 
-            playSound('sound-start'); // Басталу дыбысы
+            playSound('sound-start'); 
             window.switchView('quiz'); 
             renderQuestion(); 
             startTimer(window.appSettings.defaultTimer); 
@@ -732,41 +698,25 @@
             const q = window.currentQuiz.questions[window.currentQuestionIdx];
             document.getElementById('question-index-text').textContent = `${window.currentQuestionIdx + 1} / ${window.currentQuiz.questions.length}`;
             document.getElementById('question-text').textContent = q.q;
-            document.getElementById('btn-next').classList.add('hidden'); // Келесіні жасыру
+            document.getElementById('btn-next').classList.add('hidden'); 
             
-            // KAHOOT СТИЛІНДЕ СУРЕТТІ КӨРСЕТУ
             const wrapper = document.getElementById('image-wrapper');
             const imgEl = document.getElementById('question-image');
-            if (q.image && q.image.length > 10) { 
-                imgEl.src = q.image; 
-                wrapper.classList.remove('hidden'); 
-            } else { 
-                imgEl.src = ''; 
-                wrapper.classList.add('hidden'); 
-            }
+            if (q.image && q.image.length > 10) { imgEl.src = q.image; wrapper.classList.remove('hidden'); } 
+            else { imgEl.src = ''; wrapper.classList.add('hidden'); }
 
             const cnt = document.getElementById('options-container'); cnt.innerHTML = '';
             q.options.forEach((opt, idx) => {
                 const d = document.createElement('div'); d.className = `option-item p-4 cursor-pointer flex items-center gap-3`;
                 d.innerHTML = `<div class="w-8 h-8 rounded-lg bg-slate-200 text-slate-700 font-bold flex items-center justify-center text-sm">${['A','B','C','D'][idx]}</div><div class="text-sm font-bold">${opt}</div>`;
                 
-                // KAHOOT СТИЛІНДЕГІ ЖАУАП ТЕКСЕРУ
                 d.onclick = () => {
-                    clearInterval(window.timerInterval); // Таймер тоқтайды
+                    clearInterval(window.timerInterval); 
                     window.userAnswers[window.currentQuestionIdx] = idx;
-                    
-                    // Барлық батырмаларды басуға тыйым салу
                     Array.from(cnt.children).forEach(child => child.style.pointerEvents = 'none');
-                    
-                    if (idx === q.answer) {
-                        d.classList.add('correct'); window.quizScore++;
-                        playSound('sound-correct'); // Дұрыс дыбысы
-                    } else {
-                        d.classList.add('wrong');
-                        cnt.children[q.answer].classList.add('correct'); // Дұрысын көрсету
-                        playSound('sound-wrong'); // Қате дыбысы
-                    }
-                    document.getElementById('btn-next').classList.remove('hidden'); // Келесіге өту ашылады
+                    if (idx === q.answer) { d.classList.add('correct'); window.quizScore++; playSound('sound-correct'); } 
+                    else { d.classList.add('wrong'); cnt.children[q.answer].classList.add('correct'); playSound('sound-wrong'); }
+                    document.getElementById('btn-next').classList.remove('hidden'); 
                 };
                 cnt.appendChild(d);
             });
@@ -779,16 +729,13 @@
             clearInterval(window.timerInterval); window.timerSeconds = s; 
             document.getElementById('timer-text').textContent = `00:${window.timerSeconds.toString().padStart(2,'0')}`;
             window.timerInterval = setInterval(() => { 
-                window.timerSeconds--; 
-                document.getElementById('timer-text').textContent = `00:${window.timerSeconds.toString().padStart(2,'0')}`; 
+                window.timerSeconds--; document.getElementById('timer-text').textContent = `00:${window.timerSeconds.toString().padStart(2,'0')}`; 
                 if(window.timerSeconds<=0){ 
-                    clearInterval(window.timerInterval); 
-                    playSound('sound-wrong'); // Уақыт бітсе қате дыбысы
-                    document.getElementById('btn-next').classList.remove('hidden');
+                    clearInterval(window.timerInterval); playSound('sound-wrong'); document.getElementById('btn-next').classList.remove('hidden');
                     const cnt = document.getElementById('options-container');
                     Array.from(cnt.children).forEach(child => child.style.pointerEvents = 'none');
                     const ans = window.currentQuiz.questions[window.currentQuestionIdx].answer;
-                    if(cnt.children[ans]) cnt.children[ans].classList.add('correct'); // Дұрысты көрсету
+                    if(cnt.children[ans]) cnt.children[ans].classList.add('correct'); 
                 }
             }, 1000); 
         }
@@ -809,33 +756,58 @@
             document.getElementById('student-results-tbody').innerHTML = firebaseStudentResults.map(r => `<tr class="border-t"><td class="p-3.5 font-bold">${r.studentName}</td><td class="p-3.5">${r.title}</td><td class="p-3.5">${r.date}</td><td class="p-3.5 font-bold">${r.score}/${r.total}</td></tr>`).join('');
         }
 
-        // --- AI СУРЕТ ОҚУ (АВТО-КІШІРЕЙТУ ҚОЛДАНЫЛДЫ) ---
+        // --- ЖАҢАРТЫЛҒАН, ҚАУІПСІЗДІГІ АЛЫНҒАН AI ФУНКЦИЯСЫ ---
         window.generateTeacherQuizWithAI = async function() {
             const topic = document.getElementById('teacher-ai-topic').value.trim(); 
             const count = document.getElementById('teacher-ai-count').value || 5;
             const fileInput = document.getElementById('teacher-ai-image');
             
-            if(!window.appSettings.apiKey) { window.showToast("Кілтті жазыңыз", true); return; }
+            if(!window.appSettings.apiKey) { window.showToast("Кілтті жазыңыз (Баптауларға кіріңіз)", true); return; }
             if(!topic && !fileInput.files.length) { window.showToast("Тақырып немесе сурет қосыңыз", true); return; }
             
             document.getElementById('ai-loading-overlay').classList.remove('hidden'); document.getElementById('ai-loading-overlay').classList.add('flex');
+            
             try {
-                let parts = [{ text: `Тақырып: "${topic}". Тіл: ${window.currentLang}. Дәл ${count} сұрақтан тұратын тест құрастыр. Егер сурет берілсе, суретке байланысты сұрақтар қой. Тек мына JSON форматты қайтар, ешқандай басқа сөзсіз: {"questions": [{"q": "Сұрақ", "options": ["А", "В", "С", "Д"], "answer": 0}]}` }];
+                // Промптты "мүмкіндігінше көп" етіп өзгерттік, AI қатып қалмас үшін
+                let promptText = `Тақырып немесе сұрақ: "${topic}". Тіл: ${window.currentLang}. Мүмкіндігінше ${count} сұрақтан тұратын тест құрастыр. Егер сурет берілсе, міндетті түрде сол суретке қарап талдап, сұрақтар қой. Егер суреттен ${count} сұрақ шықпаса, қанша шығады (мысалы 1 сұрақ болса да) сонша жаз. Тек мына JSON форматты қайтар: {"questions": [{"q": "Сұрақ", "options": ["А", "В", "С", "Д"], "answer": 0}]}`;
                 
+                let parts = [{ text: promptText }];
                 let uploadedImgFullUrl = '';
-                // Егер мұғалім сурет жүктеген болса, оны кішірейтіп AI-ға береміз
+                
                 if(fileInput.files.length > 0) {
                     const resized = await compressImage(fileInput.files[0]);
-                    uploadedImgFullUrl = resized.fullUrl; // Мұны тестке тіркейміз
+                    uploadedImgFullUrl = resized.fullUrl; 
                     parts.push({ inlineData: { data: resized.rawBase64, mimeType: resized.mimeType } });
                 }
 
+                // ҚАУІПСІЗДІК ФИЛЬТРЛЕРІН ӨШІРУ (Аниме/Адам бұғатталмас үшін)
+                const reqBody = {
+                    contents: [{ parts: parts }],
+                    generationConfig: { responseMimeType: "application/json" },
+                    safetySettings: [
+                        { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },
+                        { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_NONE" },
+                        { category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_NONE" },
+                        { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_NONE" }
+                    ]
+                };
+
                 const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${window.appSettings.apiKey}`, {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ contents: [{ parts: parts }], generationConfig: { responseMimeType: "application/json" }})
+                    body: JSON.stringify(reqBody)
                 });
+                
+                if (!res.ok) {
+                    const errData = await res.json();
+                    throw new Error(errData.error?.message || "API сервер қатесі");
+                }
+
                 const data = await res.json();
                 
+                if(!data.candidates || data.candidates.length === 0) {
+                     throw new Error("AI жауап қайтармады (Бұғатталған болуы мүмкін)");
+                }
+
                 let rawText = data.candidates[0].content.parts[0].text;
                 rawText = rawText.replace(/```json/gi, '').replace(/```/gi, '').trim();
                 const quizData = JSON.parse(rawText);
@@ -843,7 +815,6 @@
                 const list = document.getElementById('teacher-questions-list'); list.innerHTML = '';
                 quizData.questions.forEach((qObj) => {
                     const c = document.createElement('div'); c.className = 'bg-slate-50 dark:bg-[#2d2d2d] border border-slate-200 dark:border-[#444] p-5 rounded-2xl space-y-3 mb-4';
-                    // Егер AI-ға сурет салынса, сол сурет тесттің өзіне де автоматты түрде тіркеледі
                     c.innerHTML = `
                         <input type="text" class="teacher-q-prompt w-full bg-white border p-3 rounded-xl text-sm font-bold" value="${qObj.q}">
                         <div class="flex gap-2 items-center">
@@ -855,8 +826,11 @@
                     `;
                     list.appendChild(c);
                 });
-                document.getElementById('teacher-quiz-title').value = topic || "Жаңа AI Тест"; window.showToast("Сұрақтар дайын!");
-            } catch(e) { window.showToast("AI қатесі: Қайта байқап көріңіз", true); }
+                document.getElementById('teacher-quiz-title').value = topic || "Сурет бойынша тест"; window.showToast("Сұрақтар дайын!");
+            } catch(e) { 
+                console.error(e);
+                window.showToast("AI Қатесі: " + e.message.substring(0,40), true); 
+            }
             finally { document.getElementById('ai-loading-overlay').classList.add('hidden'); document.getElementById('ai-loading-overlay').classList.remove('flex'); }
         };
     </script>
