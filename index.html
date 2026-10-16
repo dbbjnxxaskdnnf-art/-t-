@@ -155,7 +155,6 @@
                 <h2 class="serif-heading text-3xl font-bold text-slate-900" id="ui-set-title">Платформа Баптаулары</h2>
             </div>
 
-            <!-- ЖАҢА ФУНКЦИЯ: FIREBASE СЕРВЕР ҚОСУ БӨЛІМІ -->
             <div class="bg-indigo-50 p-6 rounded-3xl shadow-sm border border-indigo-100 dark:bg-[#2d2d2d] dark:border-[#444]">
                 <h3 class="font-bold text-slate-900 dark:text-white text-lg flex items-center gap-2 mb-2" id="ui-set-db-title"><i class="fa-solid fa-server text-blue-600"></i> Деректер базасы (Сервер)</h3>
                 <p class="text-sm text-slate-600 dark:text-slate-400 mb-4" id="ui-set-db-desc">Тесттер барлық оқушыларға бірден көрінуі үшін Firebase сілтемесін осында қосыңыз.</p>
@@ -257,6 +256,9 @@
                     <h4 class="font-bold text-indigo-900 dark:text-indigo-400 mb-2 flex items-center gap-2 text-lg"><i class="fa-solid fa-wand-magic-sparkles"></i> <span id="ui-teacher-ai-title">AI көмегімен жасау</span></h4>
                     <div class="flex flex-col md:flex-row gap-3">
                         <input type="text" id="teacher-ai-topic" class="flex-1 bg-white border border-indigo-200 rounded-xl p-3 text-sm focus:outline-none" placeholder="Тақырыпты жазыңыз...">
+                        <!-- СҰРАҚ САНЫН ТАҢДАУ ӨРІСІ ҚОСЫЛДЫ -->
+                        <input type="number" id="teacher-ai-count" class="w-full md:w-24 bg-white border border-indigo-200 rounded-xl p-3 text-sm focus:outline-none text-center" value="5" min="1" max="20" title="Сұрақ саны">
+                        
                         <button type="button" onclick="generateTeacherQuizWithAI()" class="btn-indigo text-sm whitespace-nowrap shadow-md" id="ui-btn-ai-gen"><i class="fa-solid fa-robot"></i> AI Жасау</button>
                     </div>
                 </div>
@@ -820,6 +822,9 @@
         
         window.generateTeacherQuizWithAI = async function() {
             const topic = document.getElementById('teacher-ai-topic').value.trim();
+            // ЖАҢА ФУНКЦИЯ: Енгізілген сұрақ санын оқиды
+            const count = document.getElementById('teacher-ai-count').value || 5; 
+            
             if(!window.appSettings.apiKey) { window.showToast("Баптауларға кіріп Gemini API кілтін енгізіңіз!", true); return; }
             if(!topic) { window.showToast("Тақырып жазыңыз", true); return; }
             
@@ -827,7 +832,8 @@
             try {
                 const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${window.appSettings.apiKey}`, {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ contents: [{ parts: [{ text: `Тақырып: "${topic}". Осыған Қазақ тілінде 3 сұрақтан тұратын тест құрастыр. Тек мына JSON форматты қайтар: {"questions": [{"q": "Сұрақ", "options": ["А", "В", "С", "Д"], "answer": 0}]}` }]}], generationConfig: { responseMimeType: "application/json" }})
+                    // ЖАҢА ФУНКЦИЯ: Сұраныста нақты 'count' санын сұраймыз
+                    body: JSON.stringify({ contents: [{ parts: [{ text: `Тақырып: "${topic}". Осыған Қазақ тілінде дәл ${count} сұрақтан тұратын тест құрастыр. Тек мына JSON форматты қайтар: {"questions": [{"q": "Сұрақ", "options": ["А", "В", "С", "Д"], "answer": 0}]}` }]}], generationConfig: { responseMimeType: "application/json" }})
                 });
                 const data = await res.json();
                 const quizData = JSON.parse(data.candidates[0].content.parts[0].text);
