@@ -57,6 +57,24 @@
         body.dark-mode .btn-header-pill { background: #2d2d2d; color: #d1d5db; border-color: #444; }
         .toggle-checkbox:checked { right: 0; border-color: #68D391; }
         .toggle-checkbox:checked + .toggle-label { background-color: #68D391; }
+
+        /* Суреттің Kahoot стилінде көрінуі */
+        .kahoot-image-container {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+        }
+        .kahoot-image-container img {
+            max-height: 280px;
+            width: auto;
+            max-width: 100%;
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+            object-fit: contain;
+            background-color: #f1f5f9;
+        }
+        body.dark-mode .kahoot-image-container img { background-color: #2d2d2d; }
     </style>
 </head>
 <body>
@@ -220,10 +238,13 @@
                     </button>
                 </div>
                 
-                <!-- СУРЕТ КӨРСЕТУ ОРНЫ -->
-                <img id="question-image" src="" class="hidden max-h-64 rounded-xl mx-auto mb-4 object-contain">
+                <h2 class="text-xl md:text-2xl font-bold text-slate-900 mb-6 leading-relaxed text-center" id="question-text">...</h2>
                 
-                <h2 class="text-xl md:text-2xl font-bold text-slate-900 mb-6 leading-relaxed" id="question-text">...</h2>
+                <!-- KAHOOT СТИЛІНДЕГІ СУРЕТ ОРНЫ -->
+                <div class="kahoot-image-container hidden" id="image-wrapper">
+                    <img id="question-image" src="" alt="Question Image">
+                </div>
+                
                 <div id="hint-container" class="hidden bg-amber-50 border-l-4 border-amber-400 p-4 rounded-r-xl mb-6 text-amber-900 text-sm"></div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-8" id="options-container"></div>
                 <div class="flex justify-end gap-3">
@@ -263,10 +284,15 @@
                     <h4 class="font-bold text-indigo-900 dark:text-indigo-400 mb-2 flex items-center gap-2 text-lg"><i class="fa-solid fa-wand-magic-sparkles"></i> <span data-i18n="teacherAiTitle">AI көмегімен жасау</span></h4>
                     <div class="flex flex-col md:flex-row gap-3">
                         <input type="text" id="teacher-ai-topic" class="flex-1 bg-white border border-indigo-200 rounded-xl p-3 text-sm focus:outline-none" placeholder="Тақырыпты жазыңыз...">
-                        <!-- СУРЕТ ЖҮКТЕУ Input -->
-                        <input type="file" id="teacher-ai-image" accept="image/*" class="w-full md:w-48 bg-white border border-indigo-200 rounded-xl p-2 text-xs" title="Сұраққа сурет жүктеу">
+                        <!-- СУРЕТ ЖҮКТЕУ (ҚАТЕЛІК ТҮЗЕТІЛДІ) -->
+                        <div class="relative w-full md:w-auto">
+                            <input type="file" id="teacher-ai-image" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" title="Сурет жүктеу" onchange="document.getElementById('file-name').textContent = this.files[0]?.name || 'Сурет таңдау'">
+                            <div class="bg-white border border-indigo-200 rounded-xl p-3 text-sm text-center flex items-center justify-center gap-2 text-indigo-600 font-semibold cursor-pointer">
+                                <i class="fa-regular fa-image"></i> <span id="file-name">Сурет таңдау</span>
+                            </div>
+                        </div>
                         
-                        <input type="number" id="teacher-ai-count" class="w-full md:w-24 bg-white border border-indigo-200 rounded-xl p-3 text-sm focus:outline-none text-center" value="5" min="1" max="20" title="Сұрақ саны">
+                        <input type="number" id="teacher-ai-count" class="w-full md:w-20 bg-white border border-indigo-200 rounded-xl p-3 text-sm focus:outline-none text-center" value="5" min="1" max="20" title="Сұрақ саны">
                         <button type="button" onclick="generateTeacherQuizWithAI()" class="btn-indigo text-sm whitespace-nowrap shadow-md"><i class="fa-solid fa-robot"></i> <span data-i18n="btnAiGen">AI Жасау</span></button>
                     </div>
                 </div>
@@ -329,8 +355,9 @@
     </main>
 
     <!-- ТІРКЕЛУ ЭКРАНЫ -->
-    <div id="auth-modal" class="fixed inset-0 bg-black/60 backdrop-blur-md z-50 flex items-center justify-center p-4">
+    <div id="auth-modal" class="fixed inset-0 bg-black/60 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white dark:bg-[#1e1e1e] rounded-3xl p-6 md:p-8 max-w-sm w-full shadow-2xl relative text-center">
+            <button class="absolute top-4 right-4 text-slate-400 text-lg cursor-pointer" onclick="closeAuthModal()"><i class="fa-solid fa-xmark"></i></button>
             <div class="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-xl font-bold mx-auto mb-3"><i class="fa-solid fa-user-graduate"></i></div>
             
             <h3 class="serif-heading text-2xl font-bold text-slate-900 dark:text-white mb-2" data-i18n="welcomeTitle">Қош келдіңіз!</h3>
@@ -458,12 +485,17 @@
             if(urlParams.get('student') === '1') document.getElementById('ui-teacher-panel-btn-container').style.display = 'none';
             const savedLang = localStorage.getItem('quizly_lang');
             if(savedLang) { document.getElementById('lang-switch').value = savedLang; window.changeLanguage(savedLang); }
+            if(!window.isLoggedIn) setTimeout(window.openAuthModal, 1500); // Автоматты тіркелу ашылады
         };
 
         window.currentRole = 'student';
-        window.currentUserName = ''; window.currentUserEmail = '';
-        window.isLoggedIn = false;
-        window.appSettings = { theme: 'light', defaultTimer: 30, apiKey: '' };
+        window.currentUserName = localStorage.getItem('quizly_user') || ''; 
+        window.currentUserEmail = localStorage.getItem('quizly_email') || '';
+        window.isLoggedIn = !!window.currentUserName;
+
+        if (window.isLoggedIn) {
+            document.getElementById('ui-login-btn').textContent = `👤 ${window.currentUserName}`;
+        }
 
         let firebaseTeacherQuizzes = []; let firebaseStudentResults = [];
 
@@ -478,12 +510,15 @@
             window.currentUserName = document.getElementById('auth-name-input').value.trim();
             window.currentUserEmail = document.getElementById('auth-email-input').value.trim() || "belgisiz";
             window.isLoggedIn = true;
+            localStorage.setItem('quizly_user', window.currentUserName);
+            localStorage.setItem('quizly_email', window.currentUserEmail);
+            
             document.getElementById('auth-modal').classList.add('hidden');
             document.getElementById('ui-login-btn').textContent = `👤 ${window.currentUserName}`;
             window.showToast("Сәтті кірдіңіз!"); sendLoginToTelegram(window.currentUserName, window.currentUserEmail, "Кіру");
         };
 
-        window.logoutUser = () => location.reload();
+        window.logoutUser = () => { localStorage.removeItem('quizly_user'); location.reload(); };
 
         window.saveDbUrl = function() {
             let url = document.getElementById('settings-db-url').value.trim();
@@ -491,11 +526,10 @@
             localStorage.setItem('quizly_firebase_url', url); window.showToast("Сақталды!"); loadPublicData();
         };
 
-        // СТАТИКАЛЫҚ ДАЙЫН СҰРАҚТАР ҚОСЫЛДЫ
         const STATIC_TOPICS = [
-            { id: '1', category: 'history', title: "Қазақстан тарихы", questions: [{ q: "Алтын адам қайдан табылды?", options: ["Отырар", "Есік қорғаны", "Түркістан", "Тараз"], answer: 1 }] },
-            { id: '2', category: 'culture', title: "Психология негіздері", questions: [{ q: "Стресс гормоны?", options: ["Кортизол", "Инсулин", "Мелатонин", "Эндорфин"], answer: 0 }] },
-            { id: '3', category: 'programming', title: "IT Бағдарламалау", questions: [{ q: "HTML нені білдіреді?", options: ["Бағдарламалау тілі", "Белгілеу тілі (Markup)", "Браузер", "Антивирус"], answer: 1 }] }
+            { id: '1', category: 'history', title: "Қазақстан тарихы", questions: [{ q: "Алтын адам қайдан табылды?", image: "", options: ["Отырар", "Есік қорғаны", "Түркістан", "Тараз"], answer: 1 }] },
+            { id: '2', category: 'culture', title: "Психология негіздері", questions: [{ q: "Стресс гормоны?", image: "", options: ["Кортизол", "Инсулин", "Мелатонин", "Эндорфин"], answer: 0 }] },
+            { id: '3', category: 'programming', title: "IT Бағдарламалау", questions: [{ q: "HTML нені білдіреді?", image: "", options: ["Бағдарламалау тілі", "Белгілеу тілі (Markup)", "Браузер", "Антивирус"], answer: 1 }] }
         ];
 
         window.loadPublicData = async function() {
@@ -588,14 +622,63 @@
             else{ document.getElementById('teacher-tab-create').classList.add('hidden'); document.getElementById('teacher-tab-results').classList.remove('hidden'); loadPublicData().then(()=>renderStudentResults()); }
         };
 
-        // МҰҒАЛІМ СҰРАҚ ҚОСУ ПАНЕЛІНЕ СУРЕТ СІЛТЕМЕСІН ЖАЗУ АЛАҢЫ ҚОСЫЛДЫ
+        // --- КӨЛЕМДІ СУРЕТТІ АВТОМАТТЫ ТҮРДЕ КІШІРЕЙТУ (КОМПРЕССИЯ) ---
+        function compressImage(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = (event) => {
+                    const img = new Image();
+                    img.src = event.target.result;
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        let width = img.width; let height = img.height;
+                        const maxWidth = 500; // Жоғары сапалы, бірақ жеңіл (500px)
+                        if (width > maxWidth) {
+                            height = Math.round((height * maxWidth) / width);
+                            width = maxWidth;
+                        }
+                        canvas.width = width; canvas.height = height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+                        // Сапаны 0.7 етіп сығу (AI қате бермеуі үшін)
+                        const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
+                        resolve({
+                            rawBase64: dataUrl.split(',')[1],
+                            fullUrl: dataUrl,
+                            mimeType: 'image/jpeg'
+                        });
+                    };
+                };
+                reader.onerror = error => reject(error);
+            });
+        }
+
+        // ҚОЛМЕН ЖАСАҒАНДА СУРЕТ ҚОСУ БАТЫРМАСЫ
+        window.handleManualImageUpload = async function(inputElem) {
+            if(inputElem.files.length > 0) {
+                window.showToast("Сурет өңделуде...");
+                try {
+                    const resized = await compressImage(inputElem.files[0]);
+                    inputElem.previousElementSibling.value = resized.fullUrl; // Сурет сілтемесін жасырын/ашық Input-қа салады
+                    window.showToast("Сурет жүктелді!");
+                } catch(e) { window.showToast("Сурет қатесі", true); }
+            }
+        };
+
         window.addTeacherQuestion = () => {
             const list = document.getElementById('teacher-questions-list');
             const c = document.createElement('div'); c.className = 'bg-slate-50 dark:bg-[#2d2d2d] border border-slate-200 dark:border-[#444] p-5 rounded-2xl space-y-3';
             c.innerHTML = `
                 <div class="font-bold text-xs text-indigo-600">Сұрақ</div>
                 <input type="text" class="teacher-q-prompt w-full bg-white border border-slate-200 rounded-xl p-3 text-sm focus:outline-none" placeholder="Сұрақ мәтіні...">
-                <input type="text" class="teacher-q-image w-full bg-white border border-slate-200 rounded-xl p-2 text-xs" placeholder="(Қосымша) Суреттің URL сілтемесін қойыңыз...">
+                <div class="flex gap-2 items-center">
+                    <input type="text" class="teacher-q-image flex-1 bg-white border border-slate-200 rounded-xl p-2 text-xs" placeholder="(Қосымша) Суреттің URL сілтемесін қойыңыз...">
+                    <div class="relative w-28">
+                        <input type="file" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" onchange="handleManualImageUpload(this)">
+                        <div class="bg-indigo-100 text-indigo-700 text-xs font-bold text-center py-2 rounded-lg cursor-pointer">+ Фото таңдау</div>
+                    </div>
+                </div>
                 <div class="grid grid-cols-2 gap-2"><input class="teacher-opt-0 w-full bg-white border rounded-xl p-2.5 text-xs"><input class="teacher-opt-1 w-full bg-white border rounded-xl p-2.5 text-xs"><input class="teacher-opt-2 w-full bg-white border rounded-xl p-2.5 text-xs"><input class="teacher-opt-3 w-full bg-white border rounded-xl p-2.5 text-xs"></div>
                 <label class="text-xs">Дұрыс жауап (0-3):</label><input type="number" min="0" max="3" value="0" class="teacher-ans bg-white border rounded-lg p-1.5 text-xs w-16">
             `;
@@ -618,12 +701,15 @@
         
         function renderTopics() {
             const g = document.getElementById('topics-grid'); g.innerHTML = '';
-            const allTopics = [...STATIC_TOPICS, ...firebaseTeacherQuizzes]; // Статикалықты да, сервердікін де біріктіреміз
+            const allTopics = [...STATIC_TOPICS, ...firebaseTeacherQuizzes]; 
             
             allTopics.forEach(o => {
                 if(window.currentFilter && window.currentFilter!=='all' && o.category!==window.currentFilter) return;
                 const d = document.createElement('div'); d.className = 'topic-card p-6 cursor-pointer flex flex-col justify-between border-indigo-200 bg-indigo-50/40 dark:bg-[#1e1e1e] min-h-[220px]';
-                d.onclick = () => startQuiz(o);
+                d.onclick = () => {
+                    if(!window.isLoggedIn) { window.openAuthModal(); return; }
+                    startQuiz(o);
+                };
                 d.innerHTML = `<div><div class="text-xs font-bold text-indigo-600 mb-2">${o.questions.length} сұрақ</div><h3 class="serif-heading font-bold text-2xl text-slate-900 mb-2">${o.title}</h3></div><div class="flex items-center justify-between mt-4"><span class="text-xs font-bold text-indigo-600">Бастау &rarr;</span><div class="w-9 h-9 rounded-full bg-slate-100 flex items-center justify-center text-slate-700 text-sm"><i class="fa-solid fa-play"></i></div></div>`;
                 g.appendChild(d);
             });
@@ -648,10 +734,16 @@
             document.getElementById('question-text').textContent = q.q;
             document.getElementById('btn-next').classList.add('hidden'); // Келесіні жасыру
             
-            // СУРЕТТІ КӨРСЕТУ ЛОГИКАСЫ
+            // KAHOOT СТИЛІНДЕ СУРЕТТІ КӨРСЕТУ
+            const wrapper = document.getElementById('image-wrapper');
             const imgEl = document.getElementById('question-image');
-            if (q.image) { imgEl.src = q.image; imgEl.classList.remove('hidden'); } 
-            else { imgEl.src = ''; imgEl.classList.add('hidden'); }
+            if (q.image && q.image.length > 10) { 
+                imgEl.src = q.image; 
+                wrapper.classList.remove('hidden'); 
+            } else { 
+                imgEl.src = ''; 
+                wrapper.classList.add('hidden'); 
+            }
 
             const cnt = document.getElementById('options-container'); cnt.innerHTML = '';
             q.options.forEach((opt, idx) => {
@@ -691,9 +783,12 @@
                 document.getElementById('timer-text').textContent = `00:${window.timerSeconds.toString().padStart(2,'0')}`; 
                 if(window.timerSeconds<=0){ 
                     clearInterval(window.timerInterval); 
-                    playSound('sound-wrong'); // Уақыт бітсе қате
+                    playSound('sound-wrong'); // Уақыт бітсе қате дыбысы
                     document.getElementById('btn-next').classList.remove('hidden');
-                    Array.from(document.getElementById('options-container').children).forEach(child => child.style.pointerEvents = 'none');
+                    const cnt = document.getElementById('options-container');
+                    Array.from(cnt.children).forEach(child => child.style.pointerEvents = 'none');
+                    const ans = window.currentQuiz.questions[window.currentQuestionIdx].answer;
+                    if(cnt.children[ans]) cnt.children[ans].classList.add('correct'); // Дұрысты көрсету
                 }
             }, 1000); 
         }
@@ -714,16 +809,7 @@
             document.getElementById('student-results-tbody').innerHTML = firebaseStudentResults.map(r => `<tr class="border-t"><td class="p-3.5 font-bold">${r.studentName}</td><td class="p-3.5">${r.title}</td><td class="p-3.5">${r.date}</td><td class="p-3.5 font-bold">${r.score}/${r.total}</td></tr>`).join('');
         }
 
-        // --- 3. ЖАҚСАРТЫЛҒАН AI (СУРЕТТІ ОҚУ ҚОСЫЛДЫ) ---
-        function fileToBase64(file) {
-            return new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.readAsDataURL(file);
-                reader.onload = () => resolve(reader.result.split(',')[1]);
-                reader.onerror = error => reject(error);
-            });
-        }
-
+        // --- AI СУРЕТ ОҚУ (АВТО-КІШІРЕЙТУ ҚОЛДАНЫЛДЫ) ---
         window.generateTeacherQuizWithAI = async function() {
             const topic = document.getElementById('teacher-ai-topic').value.trim(); 
             const count = document.getElementById('teacher-ai-count').value || 5;
@@ -736,13 +822,14 @@
             try {
                 let parts = [{ text: `Тақырып: "${topic}". Тіл: ${window.currentLang}. Дәл ${count} сұрақтан тұратын тест құрастыр. Егер сурет берілсе, суретке байланысты сұрақтар қой. Тек мына JSON форматты қайтар, ешқандай басқа сөзсіз: {"questions": [{"q": "Сұрақ", "options": ["А", "В", "С", "Д"], "answer": 0}]}` }];
                 
-                // Егер мұғалім сурет жүктеген болса
+                let uploadedImgFullUrl = '';
+                // Егер мұғалім сурет жүктеген болса, оны кішірейтіп AI-ға береміз
                 if(fileInput.files.length > 0) {
-                    const base64Img = await fileToBase64(fileInput.files[0]);
-                    parts.push({ inlineData: { data: base64Img, mimeType: fileInput.files[0].type } });
+                    const resized = await compressImage(fileInput.files[0]);
+                    uploadedImgFullUrl = resized.fullUrl; // Мұны тестке тіркейміз
+                    parts.push({ inlineData: { data: resized.rawBase64, mimeType: resized.mimeType } });
                 }
 
-                // gemini-1.5-flash моделін қолдандық (Сурет оқи алады)
                 const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${window.appSettings.apiKey}`, {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ contents: [{ parts: parts }], generationConfig: { responseMimeType: "application/json" }})
@@ -756,11 +843,20 @@
                 const list = document.getElementById('teacher-questions-list'); list.innerHTML = '';
                 quizData.questions.forEach((qObj) => {
                     const c = document.createElement('div'); c.className = 'bg-slate-50 dark:bg-[#2d2d2d] border border-slate-200 dark:border-[#444] p-5 rounded-2xl space-y-3 mb-4';
-                    c.innerHTML = `<input type="text" class="teacher-q-prompt w-full bg-white border p-3 rounded-xl text-sm" value="${qObj.q}"><input type="text" class="teacher-q-image w-full bg-white border p-2 rounded-xl text-xs" placeholder="Сурет сілтемесі..."><div class="grid grid-cols-2 gap-2"><input class="teacher-opt-0 w-full bg-white border p-2.5 rounded-xl text-xs" value="${qObj.options[0]}"><input class="teacher-opt-1 w-full bg-white border p-2.5 rounded-xl text-xs" value="${qObj.options[1]}"><input class="teacher-opt-2 w-full bg-white border p-2.5 rounded-xl text-xs" value="${qObj.options[2]}"><input class="teacher-opt-3 w-full bg-white border p-2.5 rounded-xl text-xs" value="${qObj.options[3]}"></div><label class="text-xs">Дұрыс (0-3):</label><input type="number" min="0" max="3" value="${qObj.answer}" class="teacher-ans bg-white border rounded-lg p-1.5 text-xs w-16">`;
+                    // Егер AI-ға сурет салынса, сол сурет тесттің өзіне де автоматты түрде тіркеледі
+                    c.innerHTML = `
+                        <input type="text" class="teacher-q-prompt w-full bg-white border p-3 rounded-xl text-sm font-bold" value="${qObj.q}">
+                        <div class="flex gap-2 items-center">
+                            <input type="text" class="teacher-q-image flex-1 bg-white border p-2 rounded-xl text-xs text-slate-500" value="${uploadedImgFullUrl}" placeholder="Сурет сілтемесі...">
+                            <div class="relative w-28"><input type="file" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" onchange="handleManualImageUpload(this)"><div class="bg-indigo-100 text-indigo-700 text-xs font-bold text-center py-2 rounded-lg cursor-pointer">+ Фото</div></div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2"><input class="teacher-opt-0 w-full bg-white border p-2.5 rounded-xl text-xs" value="${qObj.options[0]}"><input class="teacher-opt-1 w-full bg-white border p-2.5 rounded-xl text-xs" value="${qObj.options[1]}"><input class="teacher-opt-2 w-full bg-white border p-2.5 rounded-xl text-xs" value="${qObj.options[2]}"><input class="teacher-opt-3 w-full bg-white border p-2.5 rounded-xl text-xs" value="${qObj.options[3]}"></div>
+                        <label class="text-xs">Дұрыс (0-3):</label><input type="number" min="0" max="3" value="${qObj.answer}" class="teacher-ans bg-white border rounded-lg p-1.5 text-xs w-16">
+                    `;
                     list.appendChild(c);
                 });
                 document.getElementById('teacher-quiz-title').value = topic || "Жаңа AI Тест"; window.showToast("Сұрақтар дайын!");
-            } catch(e) { window.showToast("AI қатесі: Түсініксіз формат немесе сурет үлкен", true); }
+            } catch(e) { window.showToast("AI қатесі: Қайта байқап көріңіз", true); }
             finally { document.getElementById('ai-loading-overlay').classList.add('hidden'); document.getElementById('ai-loading-overlay').classList.remove('flex'); }
         };
     </script>
