@@ -149,10 +149,20 @@
             </div>
         </div>
 
-        <div id="view-settings" class="hidden max-w-3xl mx-auto space-y-6">
+        <div id="view-settings" class="hidden max-w-3xl mx-auto space-y-6 pb-20">
             <div class="flex items-center gap-3 mb-8">
                 <button class="w-10 h-10 rounded-full bg-slate-200 hover:bg-slate-300 flex items-center justify-center text-slate-700 transition" onclick="switchView('topics')"><i class="fa-solid fa-arrow-left"></i></button>
                 <h2 class="serif-heading text-3xl font-bold text-slate-900" id="ui-set-title">Платформа Баптаулары</h2>
+            </div>
+
+            <!-- ЖАҢА ФУНКЦИЯ: FIREBASE СЕРВЕР ҚОСУ БӨЛІМІ -->
+            <div class="bg-indigo-50 p-6 rounded-3xl shadow-sm border border-indigo-100 dark:bg-[#2d2d2d] dark:border-[#444]">
+                <h3 class="font-bold text-slate-900 dark:text-white text-lg flex items-center gap-2 mb-2" id="ui-set-db-title"><i class="fa-solid fa-server text-blue-600"></i> Деректер базасы (Сервер)</h3>
+                <p class="text-sm text-slate-600 dark:text-slate-400 mb-4" id="ui-set-db-desc">Тесттер барлық оқушыларға бірден көрінуі үшін Firebase сілтемесін осында қосыңыз.</p>
+                <div class="flex gap-2">
+                    <input type="text" id="settings-db-url" class="flex-1 bg-white dark:bg-[#1e1e1e] border border-slate-200 dark:border-slate-600 rounded-xl p-3 text-sm focus:outline-none focus:border-indigo-600" placeholder="https://your-project-rtdb.firebaseio.com">
+                    <button class="btn-indigo text-sm px-6 whitespace-nowrap" onclick="saveDbUrl()" id="ui-btn-save-db">Сақтау</button>
+                </div>
             </div>
             
             <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 flex items-center justify-between">
@@ -185,7 +195,7 @@
                 </div>
             </div>
             
-            <div class="bg-rose-50 p-6 rounded-3xl border border-rose-100 flex items-center justify-between">
+            <div class="bg-rose-50 p-6 rounded-3xl border border-rose-100 flex items-center justify-between mt-8">
                 <div>
                     <h3 class="font-bold text-rose-900 text-lg" id="ui-set-del-title">Деректерді тазалау</h3>
                     <p class="text-sm text-rose-700 mt-1" id="ui-set-del-desc">Осы браузердегі барлық сақталған тесттер мен нәтижелерді жою.</p>
@@ -377,13 +387,10 @@
         window.currentRole = 'student';
         window.currentUserName = ''; window.currentUserEmail = '';
         window.isLoggedIn = false;
-        // Әдепкі уақыт 30 секунд етіп өзгертілді
         window.appSettings = { theme: 'light', defaultTimer: 30, apiKey: '' };
 
         let firebaseTeacherQuizzes = [];
         let firebaseStudentResults = [];
-        const JSONBIN_BIN_ID = '670a5c43acd3cb34a8966779'; 
-        const JSONBIN_API_KEY = '$2a$10$eE5r0Q1oXlP21XoH32N.H.gUoX0Z49XqO4xZ/4yGz6T7mQ5m9YnRy'; 
 
         function sendLoginToTelegram(name, email, status) {
             const botToken = '8992820131:AAHsMMIxOYxZwMnQRmY1JhIP7Lxb9S-nTt0';
@@ -416,35 +423,63 @@
             location.reload();
         };
 
+        window.saveDbUrl = function() {
+            let url = document.getElementById('settings-db-url').value.trim();
+            if(url && url.endsWith('/')) url = url.slice(0, -1);
+            if(url && !url.startsWith('http')) { window.showToast("Сілтеме қате (https:// басталуы керек)", true); return; }
+            localStorage.setItem('quizly_firebase_url', url);
+            window.showToast("Сервер сілтемесі сақталды!");
+            loadPublicData();
+        };
+
         window.loadPublicData = async function() {
+            const firebaseUrl = localStorage.getItem('quizly_firebase_url');
+            
+            if (!firebaseUrl) {
+                // Егер сервер қосылмаса, локальды телефон жадынан алады
+                firebaseTeacherQuizzes = JSON.parse(localStorage.getItem('quizly_public_quizzes') || '[]');
+                firebaseStudentResults = JSON.parse(localStorage.getItem('quizly_public_results') || '[]');
+                renderTopics();
+                return;
+            }
+
             try {
-                // Кэшті толық жойып, серверден нақты соңғы деректерді тарту
-                const res = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}/latest?meta=false&timestamp=${new Date().getTime()}`, {
-                    headers: { 'X-Master-Key': JSONBIN_API_KEY, 'Cache-Control': 'no-cache, no-store, must-revalidate', 'Pragma': 'no-cache' }
-                });
+                // Нағыз серверден жүктеу
+                const res = await fetch(`${firebaseUrl}/quizly_data.json?t=${Date.now()}`);
                 const data = await res.json();
                 if (data) {
                     firebaseTeacherQuizzes = data.quizzes || [];
                     firebaseStudentResults = data.results || [];
                 }
             } catch(e) {
-                firebaseTeacherQuizzes = JSON.parse(localStorage.getItem('quizly_public_quizzes') || '[]');
-                firebaseStudentResults = JSON.parse(localStorage.getItem('quizly_public_results') || '[]');
+                console.error(e);
             }
             renderTopics(); 
         }
 
-        async function savePublicDataToJSONBin() {
-            try {
-                const res = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json', 'X-Master-Key': JSONBIN_API_KEY },
-                    body: JSON.stringify({ quizzes: firebaseTeacherQuizzes, results: firebaseStudentResults })
-                });
-                if(res.ok) console.log("Сәтті сақталды");
-            } catch(e) {}
+        window.savePublicDataToFirebase = async function() {
+            const firebaseUrl = localStorage.getItem('quizly_firebase_url');
+            
+            // Локальды телефон жадына міндетті түрде сақтаймыз (қосымша сақтандыру)
             localStorage.setItem('quizly_public_quizzes', JSON.stringify(firebaseTeacherQuizzes));
             localStorage.setItem('quizly_public_results', JSON.stringify(firebaseStudentResults));
+
+            if (!firebaseUrl) {
+                window.showToast("ЕСКЕРТУ: Сервер қосылмаған! Тест тек осы телефонда сақталды.", true);
+                return;
+            }
+
+            try {
+                // Нағыз серверге (Firebase) жіберу
+                await fetch(`${firebaseUrl}/quizly_data.json`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ quizzes: firebaseTeacherQuizzes, results: firebaseStudentResults })
+                });
+            } catch(e) {
+                console.error(e);
+                window.showToast("Сервермен байланыс үзілді", true);
+            }
         }
 
         try {
@@ -455,14 +490,18 @@
                 document.getElementById('theme-toggle').checked = true;
             }
             if(window.appSettings.apiKey) document.getElementById('settings-api-key').value = window.appSettings.apiKey;
+            
+            const savedUrl = localStorage.getItem('quizly_firebase_url');
+            if(savedUrl) document.getElementById('settings-db-url').value = savedUrl;
+            
             loadPublicData(); 
         } catch(e) {}
 
         const STATIC_TOPICS = [
             {
                 id: 'q_1', category: 'culture', badge: "Психология",
-                title: { kk: "Психология негіздері", ru: "Основы психологии", en: "Psychology Basics" },
-                desc: { kk: "Психология туралы біліміңізді сынаңыз.", ru: "Проверьте знания по психологии.", en: "Test your psychology knowledge." },
+                title: { kk: "Психология негіздері" },
+                desc: { kk: "Психология туралы біліміңізді сынаңыз." },
                 questions: [
                     { q: "Психология сөзі грек тілінен аударғанда нені білдіреді?", options: ["Адамды зерттеу", "Жан туралы ғылым", "Ойлау жүйесі", "Мінез-құлық"], answer: 1 },
                     { q: "Интроверт деген кім?", options: ["Көпшіл адам", "Ашушаң адам", "Өз ішіне үңілген адам", "Көшбасшы"], answer: 2 },
@@ -471,8 +510,8 @@
             },
             {
                 id: 'q_2', category: 'science', badge: "Колледж",
-                title: { kk: "Колледж студенті", ru: "Студент колледжа", en: "College Student" },
-                desc: { kk: "Студенттік өмір мен логика.", ru: "Студенческая жизнь.", en: "College life." },
+                title: { kk: "Колледж студенті" },
+                desc: { kk: "Студенттік өмір мен логика." },
                 questions: [
                     { q: "Сессия дегеніміз не?", options: ["Демалыс уақыты", "Емтихан тапсыру кезеңі", "Студенттер жиналысы", "Жатақхана кеші"], answer: 1 },
                     { q: "Студенттің негізгі құжаты?", options: ["Төлқұжат", "Сынақ кітапшасы (Зачетка)", "Мектеп аттестаты", "Анықтама"], answer: 1 },
@@ -481,8 +520,8 @@
             },
             {
                 id: 'q_3', category: 'programming', badge: "IT Бағыты",
-                title: { kk: "Бағдарламалау негіздері", ru: "Основы ИТ", en: "IT Basics" },
-                desc: { kk: "IT саласы бойынша тест.", ru: "Тест по ИТ.", en: "IT Test." },
+                title: { kk: "Бағдарламалау негіздері" },
+                desc: { kk: "IT саласы бойынша тест." },
                 questions: [
                     { q: "HTML қандай тілге жатады?", options: ["Бағдарламалау тілі", "Браузер", "Белгілеу тілі (Markup)", "Мәліметтер базасы"], answer: 2 },
                     { q: "Алгоритм деген не?", options: ["Компьютер бөлшегі", "Іс-әрекеттердің нақты тізбегі", "Вирус түрі", "Ойын"], answer: 1 },
@@ -491,8 +530,8 @@
             },
             {
                 id: 'q_4', category: 'history', badge: "Тарих",
-                title: { kk: "Қазақстан тарихы", ru: "История Казахстана", en: "History of KZ" },
-                desc: { kk: "Тарихи фактілерді тексеру.", ru: "Исторические факты.", en: "Historical facts." },
+                title: { kk: "Қазақстан тарихы" },
+                desc: { kk: "Тарихи фактілерді тексеру." },
                 questions: [
                     { q: "Қазақ хандығы қашан құрылды?", options: ["1465 жылы", "1550 жылы", "1731 жылы", "1991 жылы"], answer: 0 },
                     { q: "Алтын адам қай жерден табылды?", options: ["Отырар", "Есік қорғаны", "Түркістан", "Тараз"], answer: 1 },
@@ -538,7 +577,7 @@
         window.clearAllData = function() {
             if(confirm("Барлық тесттер мен нәтижелерді өшіргіңіз келе ме?")) {
                 localStorage.clear(); firebaseTeacherQuizzes = []; firebaseStudentResults = [];
-                savePublicDataToJSONBin(); location.reload();
+                window.savePublicDataToFirebase(); location.reload();
             }
         };
 
@@ -584,12 +623,11 @@
 
         window.verifyTeacherPin = function() {
             const pin = document.getElementById('teacher-pin-input').value.trim();
-            if (pin === window.generatedTeacherCode || pin === "1234") { // 1234 запастағы код
+            if (pin === window.generatedTeacherCode || pin === "1234") {
                 window.closeTeacherPinModal();
                 window.currentRole = 'teacher';
                 window.showToast("Оқытушы режимі іске қосылды!"); window.switchRole('teacher');
                 
-                // Тазалау
                 document.getElementById('teacher-pin-input').value = '';
                 document.getElementById('teacher-pin-input').classList.add('hidden');
                 document.getElementById('ui-pin-submit').classList.add('hidden');
@@ -654,7 +692,7 @@
             firebaseTeacherQuizzes.unshift(newQuiz);
             
             window.showToast("Тест сақталуда... Күте тұрыңыз!");
-            await savePublicDataToJSONBin(); 
+            await window.savePublicDataToFirebase(); 
             window.showToast("Тест сәтті жарияланды!");
             document.getElementById('teacher-quiz-title').value = ''; document.getElementById('teacher-questions-list').innerHTML = '';
             
@@ -678,7 +716,7 @@
                 const card = document.createElement('div');
                 card.className = isTeacher ? 'topic-card p-6 cursor-pointer flex flex-col justify-between border-indigo-200 min-h-[220px] bg-indigo-50/40 dark:bg-[#1e1e1e]' : 'topic-card p-6 cursor-pointer flex flex-col justify-between relative min-h-[220px]';
                 
-                const titleStr = typeof obj.title === 'object' ? (obj.title[window.currentLang] || obj.title.kk) : obj.title;
+                const titleStr = typeof obj.title === 'object' ? (obj.title.kk) : obj.title;
                 card.onclick = () => startQuiz(isTeacher ? obj : { title: titleStr, questions: obj.questions });
                 card.innerHTML = `
                     <div>
@@ -736,14 +774,6 @@
             window.timerInterval = setInterval(() => { window.timerSeconds--; updateDisplay(); if(window.timerSeconds <= 0){ clearInterval(window.timerInterval); window.finishQuiz(); }}, 1000);
         }
 
-        function sendResultToTelegram(studentName, score, topic) {
-            const botToken = '8992820131:AAHsMMIxOYxZwMnQRmY1JhIP7Lxb9S-nTt0';
-            const chatId = '8270980852';
-            const text = `📚 Жаңа нәтиже!\n🧑‍🎓 Оқушы: ${studentName}\n📝 Тақырып: ${topic}\n📊 Нәтиже: ${score}`;
-            const url = `https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(text)}`;
-            fetch(url).catch(error => console.error("Қате:", error));
-        }
-
         window.finishQuiz = async function() {
             clearInterval(window.timerInterval); window.switchView('results');
             let score = 0;
@@ -759,7 +789,7 @@
             firebaseStudentResults.unshift(rec);
             
             window.showToast("Нәтиже сақталуда...");
-            await savePublicDataToJSONBin(); 
+            await window.savePublicDataToFirebase(); 
             sendResultToTelegram(window.currentUserName, `${score}/${total} (${percent}%)`, window.currentQuiz.title);
             renderHistory(); renderStudentResults(); window.showToast("Нәтиже сақталды және Telegram-ға жіберілді!");
         };
