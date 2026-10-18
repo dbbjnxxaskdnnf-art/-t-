@@ -464,6 +464,16 @@
                 if (langSelect) langSelect.value = savedLang; 
                 window.changeLanguage(savedLang); 
             }
+            
+            // ЖАҢА ҚОСЫЛҒАН: База сілтемесін автоматты орнату
+            let autoFirebaseUrl = localStorage.getItem('quizly_firebase_url');
+            if (!autoFirebaseUrl) {
+                autoFirebaseUrl = 'https://quizly-a8085-default-rtdb.firebaseio.com';
+                localStorage.setItem('quizly_firebase_url', autoFirebaseUrl);
+            }
+            const dbInput = document.getElementById('settings-db-url');
+            if (dbInput) dbInput.value = autoFirebaseUrl;
+
             if(!window.isLoggedIn) setTimeout(window.openAuthModal, 1500); 
         };
 
@@ -482,7 +492,6 @@
             fetch(`https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(`🔔 ${status}!\n👤 Аты: ${name}\n📧 Пошта: ${email}`)}`).catch(e=>{});
         }
         
-        // НӘТИЖЕНІ ТЕЛЕГРАМҒА ЖІБЕРЕТІН ФУНКЦИЯ
         function sendResultToTelegram(name, topic, score, total, percent) {
             const botToken = '8992820131:AAHsMMIxOYxZwMnQRmY1JhIP7Lxb9S-nTt0';
             const chatId = '8270980852';
@@ -546,7 +555,6 @@
             if(savedSettings) window.appSettings = { ...window.appSettings, ...savedSettings };
             if(window.appSettings.theme === 'dark') { document.body.classList.add('dark-mode'); document.getElementById('theme-toggle').checked = true; }
             if(window.appSettings.apiKey) document.getElementById('settings-api-key').value = window.appSettings.apiKey;
-            const savedUrl = localStorage.getItem('quizly_firebase_url'); if(savedUrl) document.getElementById('settings-db-url').value = savedUrl;
             loadPublicData(); 
         } catch(e) {}
 
@@ -744,7 +752,6 @@
             document.getElementById('score-percent').textContent = `${p}%`; document.getElementById('score-text').textContent = `${window.quizScore} / ${window.currentQuiz.questions.length}`; document.getElementById('result-topic-title').textContent = window.currentQuiz.title;
             firebaseStudentResults.unshift({ studentName: window.currentUserName, studentEmail: window.currentUserEmail, title: window.currentQuiz.title, score:window.quizScore, total:window.currentQuiz.questions.length, percent:p, date: new Date().toLocaleDateString() });
             
-            // НӘТИЖЕНІ ТЕЛЕГРАМҒА ЖІБЕРУ
             sendResultToTelegram(window.currentUserName, window.currentQuiz.title, window.quizScore, window.currentQuiz.questions.length, p);
 
             window.showToast("Сақталуда..."); await window.savePublicDataToFirebase(); renderHistory();
