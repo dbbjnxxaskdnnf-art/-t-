@@ -742,8 +742,8 @@
                     ]
                 };
 
-                // ДҰРЫС ЖӘНЕ ТҰРАҚТЫ МОДЕЛЬ АТАУЫ (gemini-2.5-flash)
-                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${window.appSettings.apiKey}`, {
+                // ДҰРЫС ЖӘНЕ ТҰРАҚТЫ МОДЕЛЬ АТАУЫ (gemini-1.5-flash)
+                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${window.appSettings.apiKey}`, {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(reqBody)
                 });
