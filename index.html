@@ -57,28 +57,13 @@
         .toggle-checkbox:checked { right: 0; border-color: #68D391; }
         .toggle-checkbox:checked + .toggle-label { background-color: #68D391; }
 
-        /* Суреттің Kahoot стилінде көрінуі */
-        .kahoot-image-container {
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            margin-bottom: 1.5rem;
-        }
-        .kahoot-image-container img {
-            max-height: 280px;
-            width: auto;
-            max-width: 100%;
-            border-radius: 16px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
-            object-fit: contain;
-            background-color: #f1f5f9;
-        }
+        .kahoot-image-container { width: 100%; display: flex; justify-content: center; margin-bottom: 1.5rem; }
+        .kahoot-image-container img { max-height: 280px; width: auto; max-width: 100%; border-radius: 16px; box-shadow: 0 8px 24px rgba(0,0,0,0.1); object-fit: contain; background-color: #f1f5f9; }
         body.dark-mode .kahoot-image-container img { background-color: #2d2d2d; }
     </style>
 </head>
 <body>
 
-    <!-- ДЫБЫСТАР -->
     <audio id="sound-start" src="https://actions.google.com/sounds/v1/cartoon/cartoon_boing.ogg"></audio>
     <audio id="sound-correct" src="https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg"></audio>
     <audio id="sound-wrong" src="https://actions.google.com/sounds/v1/cartoon/slip_and_crash.ogg"></audio>
@@ -90,12 +75,6 @@
         </div>
 
         <div class="flex items-center gap-2.5 md:gap-3 flex-wrap">
-            <select id="lang-switch" class="btn-header-pill outline-none cursor-pointer border-none font-bold" onchange="changeLanguage(this.value)">
-                <option value="kk">ҚАЗ</option>
-                <option value="ru">РУС</option>
-                <option value="en">ENG</option>
-            </select>
-            
             <button class="btn-header-lime cursor-pointer flex items-center gap-1.5 shadow-sm" onclick="openAuthModal()">
                 <i class="fa-solid fa-user text-xs"></i> <span id="ui-login-btn" data-i18n="loginBtn">Кіру</span>
             </button>
@@ -178,6 +157,17 @@
             <div class="flex items-center gap-3 mb-8">
                 <button class="w-10 h-10 rounded-full bg-slate-200 hover:bg-slate-300 flex items-center justify-center text-slate-700 transition" onclick="switchView('topics')"><i class="fa-solid fa-arrow-left"></i></button>
                 <h2 class="serif-heading text-3xl font-bold text-slate-900" data-i18n="settingsTitle">Платформа Баптаулары</h2>
+            </div>
+
+            <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 flex items-center justify-between">
+                <div>
+                    <h3 class="font-bold text-slate-900 text-lg flex items-center gap-2"><i class="fa-solid fa-language text-blue-500"></i> <span data-i18n="setLangTitle">Платформа тілі</span></h3>
+                </div>
+                <select id="lang-switch" class="bg-slate-50 border border-slate-200 rounded-xl p-2 font-bold text-sm focus:outline-none cursor-pointer" onchange="changeLanguage(this.value)">
+                    <option value="kk">ҚАЗ</option>
+                    <option value="ru">РУС</option>
+                    <option value="en">ENG</option>
+                </select>
             </div>
 
             <div class="bg-indigo-50 p-6 rounded-3xl shadow-sm border border-indigo-100 dark:bg-[#2d2d2d] dark:border-[#444]">
@@ -345,7 +335,6 @@
         </div>
     </main>
 
-    <!-- ТІРКЕЛУ ЭКРАНЫ -->
     <div id="auth-modal" class="fixed inset-0 bg-black/60 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white dark:bg-[#1e1e1e] rounded-3xl p-6 md:p-8 max-w-sm w-full shadow-2xl relative text-center">
             <button class="absolute top-4 right-4 text-slate-400 text-lg cursor-pointer" onclick="closeAuthModal()"><i class="fa-solid fa-xmark"></i></button>
@@ -368,7 +357,6 @@
         </div>
     </div>
 
-    <!-- МҰҒАЛІМ ПИН КОД / TELEGRAM КОД МОДАЛЫ -->
     <div id="teacher-pin-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white rounded-3xl p-6 md:p-8 max-w-sm w-full shadow-2xl relative text-center">
             <button class="absolute top-4 right-4 text-slate-400 text-lg cursor-pointer" onclick="closeTeacherPinModal()"><i class="fa-solid fa-xmark"></i></button>
@@ -383,7 +371,6 @@
         </div>
     </div>
 
-    <!-- QR КОД МОДАЛЫ -->
     <div id="qr-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white rounded-3xl p-6 md:p-8 max-w-sm w-full shadow-2xl relative text-center">
             <button class="absolute top-4 right-4 text-slate-400 text-lg cursor-pointer" onclick="closeQrModal()"><i class="fa-solid fa-xmark"></i></button>
@@ -403,7 +390,6 @@
         <i class="fa-solid fa-circle-check text-emerald-400" id="toast-icon"></i><span id="toast-message">Хабарлама</span>
     </div>
 
-    <!-- СКРИПТТЕР -->
     <script type="module">
         const translations = {
             kk: {
@@ -412,7 +398,7 @@
                 startBtn: "Бастау", card1Title: "Білім. Логика. Пайым.", checkBtn: "Тексеру", quizzesLabel: "Тесттер",
                 readyTitle: "Дайынсың ба?", categoriesLabel: "САНАТТАР", allQuizzesTitle: "Барлық викториналар",
                 refreshBtn: "Жаңарту", filterAll: "Барлық", filterScience: "Ғылым", filterCulture: "Психология", filterHistory: "Тарих", filterIT: "IT Бағдарламалау",
-                historyTitle: "Өткен тесттер", settingsTitle: "Баптаулар", setDbTitle: "Деректер базасы (Сервер)", setDbDesc: "Тесттер көрінуі үшін сілтеме қосыңыз.",
+                historyTitle: "Өткен тесттер", settingsTitle: "Баптаулар", setLangTitle: "Платформа тілі", setDbTitle: "Деректер базасы (Сервер)", setDbDesc: "Тесттер көрінуі үшін сілтеме қосыңыз.",
                 saveBtn: "Сақтау", setThemeTitle: "Түнгі режим", setTimeTitle: "Тест уақыты", time30: "30 сек", time60: "1 мин", time300: "5 мин",
                 setApiTitle: "API кілттері (AI)", setDelTitle: "Деректерді тазалау", setDelBtn: "Өшіру", aiHintBtn: "AI Көмек",
                 prevBtn: "Артқа", nextBtn: "Келесі", qListTitle: "Сұрақтар", finishBtn: "Аяқтау", teacherLabel: "ПАНЕЛ",
@@ -429,7 +415,7 @@
                 startBtn: "Начать", card1Title: "Знания. Логика. Ум.", checkBtn: "Проверить", quizzesLabel: "Тесты",
                 readyTitle: "Готов?", categoriesLabel: "КАТЕГОРИИ", allQuizzesTitle: "Все викторины",
                 refreshBtn: "Обновить", filterAll: "Все", filterScience: "Наука", filterCulture: "Психология", filterHistory: "История", filterIT: "IT / Код",
-                historyTitle: "История тестов", settingsTitle: "Настройки", setDbTitle: "База данных (Сервер)", setDbDesc: "Ссылка Firebase для видимости тестов.",
+                historyTitle: "История тестов", settingsTitle: "Настройки", setLangTitle: "Язык платформы", setDbTitle: "База данных (Сервер)", setDbDesc: "Ссылка Firebase для видимости тестов.",
                 saveBtn: "Сохранить", setThemeTitle: "Темный режим", setTimeTitle: "Время теста", time30: "30 сек", time60: "1 мин", time300: "5 мин",
                 setApiTitle: "API Ключи (AI)", setDelTitle: "Очистка данных", setDelBtn: "Очистить", aiHintBtn: "Подсказка",
                 prevBtn: "Назад", nextBtn: "Далее", qListTitle: "Список вопросов", finishBtn: "Завершить", teacherLabel: "ПАНЕЛЬ",
@@ -446,7 +432,7 @@
                 startBtn: "Start", card1Title: "Knowledge. Logic. Mind.", checkBtn: "Check", quizzesLabel: "Quizzes",
                 readyTitle: "Ready?", categoriesLabel: "CATEGORIES", allQuizzesTitle: "All Quizzes",
                 refreshBtn: "Refresh", filterAll: "All", filterScience: "Science", filterCulture: "Psychology", filterHistory: "History", filterIT: "IT / Coding",
-                historyTitle: "Quiz History", settingsTitle: "Settings", setDbTitle: "Database (Server)", setDbDesc: "Firebase link to sync tests globally.",
+                historyTitle: "Quiz History", settingsTitle: "Settings", setLangTitle: "Platform Language", setDbTitle: "Database (Server)", setDbDesc: "Firebase link to sync tests globally.",
                 saveBtn: "Save", setThemeTitle: "Dark Mode", setTimeTitle: "Quiz Timer", time30: "30 sec", time60: "1 min", time300: "5 min",
                 setApiTitle: "API Keys (AI)", setDelTitle: "Clear Data", setDelBtn: "Delete All", aiHintBtn: "AI Hint",
                 prevBtn: "Back", nextBtn: "Next", qListTitle: "Questions", finishBtn: "Finish", teacherLabel: "PANEL",
@@ -473,7 +459,11 @@
             const urlParams = new URLSearchParams(window.location.search);
             if(urlParams.get('student') === '1') document.getElementById('ui-teacher-panel-btn-container').style.display = 'none';
             const savedLang = localStorage.getItem('quizly_lang');
-            if(savedLang) { document.getElementById('lang-switch').value = savedLang; window.changeLanguage(savedLang); }
+            if(savedLang) { 
+                const langSelect = document.getElementById('lang-switch');
+                if (langSelect) langSelect.value = savedLang; 
+                window.changeLanguage(savedLang); 
+            }
             if(!window.isLoggedIn) setTimeout(window.openAuthModal, 1500); 
         };
 
@@ -490,6 +480,14 @@
             const botToken = '8992820131:AAHsMMIxOYxZwMnQRmY1JhIP7Lxb9S-nTt0';
             const chatId = '8270980852';
             fetch(`https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(`🔔 ${status}!\n👤 Аты: ${name}\n📧 Пошта: ${email}`)}`).catch(e=>{});
+        }
+        
+        // НӘТИЖЕНІ ТЕЛЕГРАМҒА ЖІБЕРЕТІН ФУНКЦИЯ
+        function sendResultToTelegram(name, topic, score, total, percent) {
+            const botToken = '8992820131:AAHsMMIxOYxZwMnQRmY1JhIP7Lxb9S-nTt0';
+            const chatId = '8270980852';
+            const text = `🎓 ЖАҢА НӘТИЖЕ!\n👤 Оқушы: ${name}\n📚 Тест: ${topic}\n✅ Ұпай: ${score}/${total} (${percent}%)`;
+            fetch(`https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(text)}`).catch(e=>{});
         }
 
         window.handleAuthSubmit = function(e) {
@@ -745,6 +743,10 @@
             const p = Math.round((window.quizScore/window.currentQuiz.questions.length)*100);
             document.getElementById('score-percent').textContent = `${p}%`; document.getElementById('score-text').textContent = `${window.quizScore} / ${window.currentQuiz.questions.length}`; document.getElementById('result-topic-title').textContent = window.currentQuiz.title;
             firebaseStudentResults.unshift({ studentName: window.currentUserName, studentEmail: window.currentUserEmail, title: window.currentQuiz.title, score:window.quizScore, total:window.currentQuiz.questions.length, percent:p, date: new Date().toLocaleDateString() });
+            
+            // НӘТИЖЕНІ ТЕЛЕГРАМҒА ЖІБЕРУ
+            sendResultToTelegram(window.currentUserName, window.currentQuiz.title, window.quizScore, window.currentQuiz.questions.length, p);
+
             window.showToast("Сақталуда..."); await window.savePublicDataToFirebase(); renderHistory();
         };
 
@@ -756,7 +758,6 @@
             document.getElementById('student-results-tbody').innerHTML = firebaseStudentResults.map(r => `<tr class="border-t"><td class="p-3.5 font-bold">${r.studentName}</td><td class="p-3.5">${r.title}</td><td class="p-3.5">${r.date}</td><td class="p-3.5 font-bold">${r.score}/${r.total}</td></tr>`).join('');
         }
 
-        // --- ЖАҢАРТЫЛҒАН, ҚАУІПСІЗДІГІ АЛЫНҒАН AI ФУНКЦИЯСЫ ---
         window.generateTeacherQuizWithAI = async function() {
             const topic = document.getElementById('teacher-ai-topic').value.trim(); 
             const count = document.getElementById('teacher-ai-count').value || 5;
@@ -768,7 +769,6 @@
             document.getElementById('ai-loading-overlay').classList.remove('hidden'); document.getElementById('ai-loading-overlay').classList.add('flex');
             
             try {
-                // Промптты "мүмкіндігінше көп" етіп өзгерттік, AI қатып қалмас үшін
                 let promptText = `Тақырып немесе сұрақ: "${topic}". Тіл: ${window.currentLang}. Мүмкіндігінше ${count} сұрақтан тұратын тест құрастыр. Егер сурет берілсе, міндетті түрде сол суретке қарап талдап, сұрақтар қой. Егер суреттен ${count} сұрақ шықпаса, қанша шығады (мысалы 1 сұрақ болса да) сонша жаз. Тек мына JSON форматты қайтар: {"questions": [{"q": "Сұрақ", "options": ["А", "В", "С", "Д"], "answer": 0}]}`;
                 
                 let parts = [{ text: promptText }];
@@ -780,7 +780,6 @@
                     parts.push({ inlineData: { data: resized.rawBase64, mimeType: resized.mimeType } });
                 }
 
-                // ҚАУІПСІЗДІК ФИЛЬТРЛЕРІН ӨШІРУ (Аниме/Адам бұғатталмас үшін)
                 const reqBody = {
                     contents: [{ parts: parts }],
                     generationConfig: { responseMimeType: "application/json" },
@@ -792,7 +791,7 @@
                     ]
                 };
 
-                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${window.appSettings.apiKey}`, {
+                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${window.appSettings.apiKey}`, {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(reqBody)
                 });
