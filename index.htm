@@ -10,6 +10,7 @@
     
     <style>
         * { box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+        html { scroll-behavior: smooth; }
         body { background: #f6f3e9; color: #1a1e24; min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; transition: background 0.3s, color 0.3s; }
         .serif-heading { font-family: 'Lora', serif; }
         header { background: rgba(246, 243, 233, 0.92); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(0, 0, 0, 0.05); transition: all 0.3s; }
@@ -23,6 +24,7 @@
         .btn-terracotta:hover { background: #b84c36; transform: translateY(-1px); }
         .btn-indigo { background: #2a3fd8; color: #ffffff; font-weight: 700; border-radius: 9999px; padding: 10px 24px; box-shadow: 0 4px 14px rgba(42, 63, 216, 0.25); transition: all 0.2s ease; }
         .btn-indigo:hover { background: #1f31b6; transform: translateY(-1px); }
+        .btn-indigo:disabled { background: #7c89eb; cursor: not-allowed; transform: none; box-shadow: none; }
         
         .hero-pill { background: rgba(255, 255, 255, 0.85); border: 1px solid rgba(0, 0, 0, 0.08); color: #2a3fd8; font-weight: 700; font-size: 13px; border-radius: 9999px; padding: 6px 16px; display: inline-flex; align-items: center; gap: 6px; }
         .cards-container { position: relative; width: 340px; height: 380px; }
@@ -35,13 +37,11 @@
         .topic-card { background: #ffffff; border: 1px solid rgba(0, 0, 0, 0.06); border-radius: 24px; transition: all 0.3s ease; box-shadow: 0 4px 20px rgba(0,0,0,0.02); }
         .topic-card:hover { transform: translateY(-4px); box-shadow: 0 16px 32px rgba(42, 63, 216, 0.08); }
         .quiz-card-box { background: #ffffff; border: 1px solid rgba(0, 0, 0, 0.06); border-radius: 28px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.04); }
-        .option-item { background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 16px; transition: all 0.2s ease; }
+        .option-item { background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 16px; transition: all 0.2s ease; cursor: pointer; }
         .option-item:hover { border-color: #2a3fd8; background: rgba(42, 63, 216, 0.03); }
         .option-item.selected { border-color: #2a3fd8; background: rgba(42, 63, 216, 0.08); color: #1e293b; font-weight: 600; }
         
         .ai-chat-window { background: #ffffff; border: 1px solid rgba(0, 0, 0, 0.1); box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15); border-radius: 24px; }
-        .spinner { border: 3px solid rgba(0,0,0,0.1); border-left-color: #2a3fd8; border-radius: 50%; width: 20px; height: 20px; animation: spin 1s linear infinite; display: inline-block; }
-        @keyframes spin { 100% { transform: rotate(360deg); } }
 
         /* DARK MODE CSS */
         body.dark-mode { background: #121212; color: #e5e7eb; }
@@ -62,6 +62,9 @@
         
         .toggle-checkbox:checked { right: 0; border-color: #68D391; }
         .toggle-checkbox:checked + .toggle-label { background-color: #68D391; }
+        
+        .hide-scroll::-webkit-scrollbar { display: none; }
+        .hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
 <body>
@@ -104,7 +107,9 @@
                     </h1>
                     <p class="text-slate-600 text-base md:text-lg leading-relaxed mb-8 max-w-xl" id="ui-subtitle">30 түрлі санаттағы мықты тесттер жиынтығы. Карточканы таңдап, біліміңізді сынап көріңіз.</p>
                     <div class="flex flex-wrap items-center gap-4">
-                        <button class="btn-indigo flex items-center gap-2 text-sm shadow-lg shadow-indigo-600/20" onclick="scrollToTopics()"><i class="fa-solid fa-play text-xs"></i> <span id="ui-btn-start">Бастау</span></button>
+                        <button class="btn-indigo flex items-center gap-2 text-sm shadow-lg shadow-indigo-600/20" onclick="scrollToTopics()">
+                            <i class="fa-solid fa-play text-xs"></i> <span id="ui-btn-start">Бастау</span>
+                        </button>
                     </div>
                 </div>
 
@@ -135,16 +140,16 @@
                     <div class="font-bold text-base text-slate-900" id="ui-ai-gen-title">AI Тақырып Генераторы</div>
                     <div class="text-xs text-slate-500" id="ui-ai-gen-desc">Тақырыпты енгізіңіз, AI сұрақтар құрастырады</div>
                 </div>
-                <input type="text" id="custom-topic-input" class="flex-1 min-w-[240px] bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-sm focus:outline-none focus:border-indigo-600" placeholder="Мысалы: Космос, Тарих...">
+                <input type="text" id="custom-topic-input" class="flex-1 min-w-[240px] bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-sm focus:outline-none focus:border-indigo-600" placeholder="Мысалы: Космос, Тарих, Marvel...">
                 <button class="btn-indigo text-sm flex items-center gap-2 shadow-md cursor-pointer" onclick="generateAITopic()" id="btn-generate-ai">
                     <i class="fa-solid fa-wand-magic-sparkles"></i> <span id="ui-btn-gen">Жасау</span>
                 </button>
             </div>
 
-            <div id="topics-section" class="mb-6">
+            <div id="topics-section" class="mb-6 pt-4">
                 <div class="text-xs font-extrabold text-slate-400 uppercase tracking-widest mb-1" id="ui-mood-lbl">САНАТТАР</div>
                 <h2 class="serif-heading text-3xl font-bold text-slate-900 mb-6" id="ui-section-topics">30 тамаша викторина</h2>
-                <div class="flex items-center gap-2.5 overflow-x-auto pb-4 no-scrollbar">
+                <div class="flex items-center gap-2.5 overflow-x-auto pb-4 hide-scroll">
                     <button class="filter-pill active" onclick="filterTopics('all', event)" id="f-all">Барлық тесттер</button>
                     <button class="filter-pill" onclick="filterTopics('science', event)" id="f-science">Ғылым & Технология</button>
                     <button class="filter-pill" onclick="filterTopics('culture', event)" id="f-culture">Мәдениет & Өнер</button>
@@ -170,12 +175,10 @@
                 <h2 class="serif-heading text-3xl font-bold text-slate-900" id="ui-set-title">Платформа Баптаулары</h2>
             </div>
             
-            <!-- Жүйе тілі -->
             <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100">
                 <h3 class="font-bold text-slate-900 text-lg flex items-center gap-2 mb-4" id="ui-set-lang-title">
                     <i class="fa-solid fa-globe text-blue-500"></i> Жүйе тілі
                 </h3>
-                <p class="text-sm text-slate-500 mb-4" id="ui-set-lang-desc">Платформаның негізгі интерфейс тілін таңдаңыз:</p>
                 <div class="flex gap-3">
                     <button class="flex-1 py-3 border border-slate-200 rounded-xl font-bold text-sm lang-btn transition bg-indigo-600 text-white" id="btn-kk" onclick="changeLanguage('kk')">Қазақша</button>
                     <button class="flex-1 py-3 border border-slate-200 rounded-xl font-bold text-sm lang-btn transition bg-white text-slate-700" id="btn-ru" onclick="changeLanguage('ru')">Русский</button>
@@ -183,11 +186,9 @@
                 </div>
             </div>
 
-            <!-- Дизайн (Theme) -->
             <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 flex items-center justify-between">
                 <div>
                     <h3 class="font-bold text-slate-900 text-lg flex items-center gap-2" id="ui-set-theme-title"><i class="fa-solid fa-moon text-indigo-500"></i> Түнгі режим (Dark Mode)</h3>
-                    <p class="text-sm text-slate-500 mt-1" id="ui-set-theme-desc">Көзді шаршатпау үшін қараңғы интерфейсті қосыңыз.</p>
                 </div>
                 <div class="relative inline-block w-12 mr-2 align-middle select-none transition duration-200 ease-in">
                     <input type="checkbox" name="toggle" id="theme-toggle" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer transition-all duration-300" onclick="toggleTheme()"/>
@@ -195,10 +196,8 @@
                 </div>
             </div>
 
-            <!-- Тест уақыты -->
             <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100">
                 <h3 class="font-bold text-slate-900 text-lg flex items-center gap-2 mb-4" id="ui-set-time-title"><i class="fa-solid fa-stopwatch text-amber-500"></i> Тест уақытын реттеу</h3>
-                <p class="text-sm text-slate-500 mb-4" id="ui-set-time-desc">Әр тестке берілетін стандартты уақытты таңдаңыз:</p>
                 <div class="flex gap-3">
                     <button class="flex-1 py-3 border border-slate-200 rounded-xl font-bold text-sm time-btn transition" id="time-300" onclick="setTimer(300)">5 минут</button>
                     <button class="flex-1 py-3 border border-slate-200 rounded-xl font-bold text-sm time-btn transition" id="time-600" onclick="setTimer(600)">10 минут</button>
@@ -206,24 +205,21 @@
                 </div>
             </div>
 
-            <!-- API Кілттер -->
             <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100">
-                <h3 class="font-bold text-slate-900 text-lg flex items-center gap-2 mb-2" id="ui-set-api-title"><i class="fa-solid fa-key text-emerald-500"></i> Жүйелік API кілттері (Мұғалімге)</h3>
-                <p class="text-sm text-slate-500 mb-4" id="ui-set-api-desc">Кодты ашпай-ақ, AI жұмыс істеуі үшін Gemini кілтін осы жерге сақтаңыз.</p>
-                <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Gemini AI API Key</label>
+                <h3 class="font-bold text-slate-900 text-lg flex items-center gap-2 mb-2" id="ui-set-api-title"><i class="fa-solid fa-key text-emerald-500"></i> Жүйелік API кілттері (Gemini 1.5)</h3>
+                <p class="text-sm text-slate-500 mb-4" id="ui-set-api-desc">AI функциялары жұмыс істеуі үшін API кілтті осында сақтаңыз.</p>
                 <div class="flex gap-2">
                     <input type="password" id="settings-api-key" class="flex-1 bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm focus:outline-none focus:border-indigo-600" placeholder="AIzaSy...">
-                    <button class="btn-indigo text-sm px-6" onclick="saveApiKey()" id="ui-btn-save-key">Сақтау</button>
+                    <button class="btn-indigo text-sm px-6 cursor-pointer" onclick="saveApiKey()" id="ui-btn-save-key">Сақтау</button>
                 </div>
             </div>
             
-            <!-- Деректерді тазалау -->
             <div class="bg-rose-50 p-6 rounded-3xl border border-rose-100 flex items-center justify-between">
                 <div>
                     <h3 class="font-bold text-rose-900 text-lg" id="ui-set-del-title">Деректерді тазалау</h3>
-                    <p class="text-sm text-rose-700 mt-1" id="ui-set-del-desc">Осы браузердегі барлық сақталған тесттер мен нәтижелерді жою.</p>
+                    <p class="text-sm text-rose-700 mt-1" id="ui-set-del-desc">Барлық сақталған тесттер мен нәтижелерді жою.</p>
                 </div>
-                <button class="bg-rose-600 hover:bg-rose-700 text-white font-bold py-2 px-5 rounded-xl text-sm transition" onclick="clearAllData()" id="ui-btn-del">Толық өшіру</button>
+                <button class="bg-rose-600 hover:bg-rose-700 text-white font-bold py-2 px-5 rounded-xl text-sm transition cursor-pointer" onclick="clearAllData()" id="ui-btn-del">Толық өшіру</button>
             </div>
         </div>
 
@@ -235,15 +231,15 @@
                 </div>
                 <div class="flex justify-between items-center mb-4">
                     <span class="text-xs font-bold text-indigo-600 uppercase tracking-wider" id="question-index-text">Сұрақ 1 / 5</span>
-                    <button class="bg-amber-500/10 border border-amber-500/30 text-amber-700 px-3.5 py-1.5 rounded-full text-xs font-bold flex items-center gap-1.5 transition cursor-pointer" onclick="getAIHint()">
-                        <i class="fa-regular fa-lightbulb"></i> <span id="ui-hint-btn">AI Көмек</span>
+                    <button class="bg-amber-50 border border-amber-200 text-amber-600 hover:bg-amber-100 px-3.5 py-1.5 rounded-full text-xs font-bold flex items-center gap-1.5 transition cursor-pointer shadow-sm" onclick="getAIHint()" id="ui-hint-btn">
+                        <i class="fa-regular fa-lightbulb"></i> AI Көмек
                     </button>
                 </div>
                 <h2 class="text-xl md:text-2xl font-bold text-slate-900 mb-6 leading-relaxed" id="question-text">...</h2>
-                <div id="hint-container" class="hidden bg-amber-50 border-l-4 border-amber-400 p-4 rounded-r-xl mb-6 text-amber-900 text-sm"></div>
+                <div id="hint-container" class="hidden bg-amber-50 border-l-4 border-amber-400 p-4 rounded-r-xl mb-6 text-amber-900 text-sm font-medium"></div>
                 <div class="flex flex-col gap-3 mb-8" id="options-container"></div>
                 <div class="flex justify-between gap-3">
-                    <button class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-6 py-3 rounded-2xl transition flex items-center gap-2 disabled:opacity-40" id="btn-prev" onclick="prevQuestion()">
+                    <button class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-6 py-3 rounded-2xl transition flex items-center gap-2 disabled:opacity-40 cursor-pointer" id="btn-prev" onclick="prevQuestion()">
                         <i class="fa-solid fa-arrow-left"></i> <span id="ui-btn-prev">Артқа</span>
                     </button>
                     <button class="btn-indigo flex items-center gap-2 text-sm shadow-md cursor-pointer" id="btn-next" onclick="nextQuestion()">
@@ -251,9 +247,13 @@
                     </button>
                 </div>
             </div>
-            <div class="quiz-card-box p-6 h-fit">
-                <div class="font-bold text-base text-slate-900 mb-4" id="ui-questions-list">Сұрақтар тізімі</div>
-                <div class="grid grid-cols-4 gap-2 mb-6" id="nav-grid"></div>
+            <div class="quiz-card-box p-6 h-fit hidden lg:block">
+                <div class="font-bold text-base text-slate-900 mb-4" id="ui-questions-list">Сұрақтар</div>
+                <div class="w-full flex justify-center mb-6">
+                    <div class="w-24 h-24 rounded-full border-4 border-indigo-100 flex items-center justify-center">
+                        <i class="fa-solid fa-brain text-4xl text-indigo-200"></i>
+                    </div>
+                </div>
                 <button class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 px-4 rounded-2xl transition flex items-center justify-center gap-2 shadow-lg cursor-pointer" onclick="finishQuiz()">
                     <i class="fa-solid fa-check-double"></i> <span id="ui-finish-btn">Аяқтау</span>
                 </button>
@@ -282,7 +282,7 @@
                     <h4 class="font-bold text-indigo-900 dark:text-indigo-400 mb-2 flex items-center gap-2 text-lg"><i class="fa-solid fa-wand-magic-sparkles"></i> <span id="ui-teacher-ai-title">AI көмегімен жасау</span></h4>
                     <div class="flex flex-col md:flex-row gap-3">
                         <input type="text" id="teacher-ai-topic" class="flex-1 bg-white border border-indigo-200 rounded-xl p-3 text-sm focus:outline-none" placeholder="Тақырыпты жазыңыз...">
-                        <button type="button" onclick="generateTeacherQuizWithAI()" class="btn-indigo text-sm whitespace-nowrap shadow-md" id="ui-btn-ai-gen"><i class="fa-solid fa-robot"></i> AI Жасау</button>
+                        <button type="button" onclick="generateTeacherQuizWithAI()" class="btn-indigo text-sm whitespace-nowrap shadow-md cursor-pointer" id="ui-btn-ai-gen"><i class="fa-solid fa-robot"></i> AI Жасау</button>
                     </div>
                 </div>
 
@@ -328,26 +328,31 @@
             </div>
         </div>
 
-        <!-- 5. НӘТИЖЕ (RESULTS) -->
-        <div id="view-results" class="hidden max-w-3xl mx-auto quiz-card-box p-8 text-center">
-            <h1 class="serif-heading text-3xl font-extrabold text-slate-900 mb-2" id="ui-result-title">Тест Нәтижесі</h1>
-            <p class="text-slate-500 text-sm mb-8" id="result-topic-title">Тақырып</p>
-            <div class="w-40 h-40 rounded-full bg-indigo-50 border-4 border-indigo-600 flex flex-col justify-center items-center mx-auto mb-8 shadow-xl">
-                <div class="text-4xl font-extrabold text-indigo-600" id="score-percent">0%</div>
-                <div class="text-xs text-slate-500 mt-1" id="score-text">0 / 0</div>
+        <!-- 5. НӘТИЖЕ (RESULTS) И РАЗБОР ОШИБОК -->
+        <div id="view-results" class="hidden max-w-3xl mx-auto quiz-card-box p-8">
+            <div class="text-center">
+                <h1 class="serif-heading text-3xl font-extrabold text-slate-900 mb-2" id="ui-result-title">Тест Нәтижесі</h1>
+                <p class="text-slate-500 text-sm mb-8" id="result-topic-title">Тақырып</p>
+                <div class="w-40 h-40 rounded-full bg-indigo-50 border-4 border-indigo-600 flex flex-col justify-center items-center mx-auto mb-8 shadow-xl">
+                    <div class="text-4xl font-extrabold text-indigo-600" id="score-percent">0%</div>
+                    <div class="text-xs text-slate-500 mt-1" id="score-text">0 / 0</div>
+                </div>
+                <div class="flex flex-wrap gap-4 justify-center mb-10">
+                    <button class="btn-indigo text-sm flex items-center gap-2 cursor-pointer" onclick="switchView('topics')"><i class="fa-solid fa-house"></i> <span id="ui-back-btn">Басқа тақырып</span></button>
+                    <button class="bg-slate-100 text-slate-700 font-bold px-6 py-3 rounded-full text-sm cursor-pointer hover:bg-slate-200 transition" onclick="restartQuiz()"><i class="fa-solid fa-rotate-right"></i> <span id="ui-restart-btn">Қайта тапсыру</span></button>
+                </div>
             </div>
-            <div class="flex flex-wrap gap-4 justify-center mb-8">
-                <button class="btn-indigo text-sm flex items-center gap-2 cursor-pointer" onclick="switchView('topics')"><i class="fa-solid fa-house"></i> <span id="ui-back-btn">Басқа тақырып</span></button>
-                <button class="bg-slate-100 text-slate-700 font-bold px-6 py-3 rounded-full text-sm cursor-pointer" onclick="restartQuiz()"><i class="fa-solid fa-rotate-right"></i> <span id="ui-restart-btn">Қайта тапсыру</span></button>
+            
+            <div id="review-list" class="mt-8 border-t border-slate-100 pt-8">
+                <!-- Сюда JS вставит детальный разбор ошибок -->
             </div>
-            <div class="text-left" id="review-list"></div>
         </div>
     </main>
 
     <!-- МОДАЛДАР (Тіркелу, PIN, QR) -->
     <div id="ai-loading-overlay" class="fixed inset-0 bg-black/50 backdrop-blur-md z-50 hidden flex-col items-center justify-center p-4 text-white">
         <div class="w-16 h-16 rounded-full bg-indigo-600 flex items-center justify-center text-2xl shadow-2xl animate-bounce mb-4">✨</div>
-        <h3 class="serif-heading text-2xl font-bold mb-2" id="ui-loader-title">AI талдап жатыр...</h3>
+        <h3 class="serif-heading text-2xl font-bold mb-2" id="ui-loader-title">AI жұмыс істеуде...</h3>
     </div>
 
     <div id="auth-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
@@ -389,7 +394,9 @@
     </div>
 
     <script type="module">
-        // БАЗАЛЫҚ АЙНЫМАЛЫЛАР ЖӘНЕ БАПТАУЛАР
+        // Все функции, вызываемые из HTML (onclick, onsubmit), привязываем к window, 
+        // чтобы избежать ошибок контекста ES-модулей.
+        
         window.currentLang = 'kk';
         window.currentRole = 'student';
         window.currentUserName = ''; window.currentUserEmail = '';
@@ -412,57 +419,47 @@
                 startBtn: "Бастау", genBtn: "Жасау", aiTitle: "AI Тақырып Генераторы", aiDesc: "Тақырыпты енгізіңіз, AI сұрақтар құрастырады", 
                 moodLbl: "САНАТТАР", sectionTitle: "30 тамаша викторина", fAll: "Барлық тесттер", fScience: "Ғылым & Технология", 
                 fCulture: "Мәдениет & Өнер", fHistory: "Тарих", fProg: "IT & Бағдарламалау", historyTitle: "Өткен тесттер тарихы", 
-                hintBtn: "AI Көмек", backLbl: "Артқа", nextLbl: "Келесі", finishLbl: "Аяқтау", qListTitle: "Сұрақтар тізімі", 
+                hintBtn: "AI Көмек", backLbl: "Артқа", nextLbl: "Келесі", finishLbl: "Аяқтау", qListTitle: "Сұрақтар", 
                 resTitle: "Тест Нәтижесі", resHome: "Басқа тақырып", resRestart: "Қайта тапсыру", teacherLabel: "ОҚЫТУШЫ ПАНЕЛІ", 
                 teacherMaintitle: "Тесттер мен нәтижелер", btnCreateTab: "Тест жасау", btnResTab: "Нәтижелер", btnQrTab: "QR Көрсету", 
                 btnRetStud: "Оқушыға қайту", createTitle: "Өз тестіңізді жасаңыз", aiTeachTitle: "AI көмегімен жасау", 
                 lblTestName: "Тест атауы", lblTestCat: "Санат", btnAddQ: "Сұрақ қосу", btnPublish: "Сақтау & Жариялау", 
-                resTitle2: "Оқушы нәтижелері", thName: "Аты / Поштасы", thTopic: "Тест Тақырыбы", thDate: "Күні", thScore: "Нәтиже", 
-                loaderTitle: "AI талдап жатыр...", authTitle: "Тіркеліңіз", authSubm: "Сақтау & Бастау", pinTitle: "Оқытушы PIN коды", 
-                pinSubm: "Кіру", qrTitle: "Оқушыларға арналған QR Код", setLangTitle: "Жүйе тілі", setLangDesc: "Платформаның негізгі интерфейс тілін таңдаңыз:",
-                setThemeTitle: "Түнгі режим (Dark Mode)", setThemeDesc: "Көзді шаршатпау үшін қараңғы интерфейсті қосыңыз.", 
-                setTimeTitle: "Тест уақытын реттеу", setTimeDesc: "Әр тестке берілетін стандартты уақытты таңдаңыз:", 
-                setApiTitle: "Жүйелік API кілттері (Мұғалімге)", setApiDesc: "Кодты ашпай-ақ, AI жұмыс істеуі үшін Gemini кілтін осы жерге сақтаңыз.",
-                setDelTitle: "Деректерді тазалау", setDelDesc: "Осы браузердегі барлық сақталған тесттер мен нәтижелерді жою.", btnSaveKey: "Сақтау", btnDel: "Толық өшіру",
+                resTitle2: "Оқушы нәтижелері", thName: "Аты / Поштасы", thTopic: "Тақырып", thDate: "Күні", thScore: "Нәтиже", 
+                loaderTitle: "AI жұмыс істеуде...", authTitle: "Тіркеліңіз", authSubm: "Сақтау & Бастау", pinTitle: "Оқытушы PIN коды", 
+                pinSubm: "Кіру", qrTitle: "Оқушыларға арналған QR Код", setLangTitle: "Жүйе тілі",
+                setThemeTitle: "Түнгі режим", setTimeTitle: "Тест уақыты", setApiTitle: "API кілті", btnSaveKey: "Сақтау", btnDel: "Толық өшіру",
                 aiGenBtn: "AI Жасау"
             },
             ru: { 
                 login: "Войти", logout: "Выйти", teacherPanel: "Учитель", heroTag: "Пища для ума", title1: "Будьте любопытны.", 
                 title2: "Поиграйте со знаниями.", subtitle: "Коллекция из 30 крутых тестов разных категорий.", startBtn: "Начать", 
                 genBtn: "Создать", aiTitle: "ИИ Генератор", aiDesc: "Введите тему, ИИ составит вопросы", moodLbl: "КАТЕГОРИИ", 
-                sectionTitle: "30 викторин", fAll: "Все тесты", fScience: "Наука", fCulture: "Культура", fHistory: "История", 
+                sectionTitle: "30 викторин", fAll: "Все", fScience: "Наука", fCulture: "Культура", fHistory: "История", 
                 fProg: "IT", historyTitle: "История тестов", hintBtn: "ИИ Подсказка", backLbl: "Назад", nextLbl: "Далее", 
-                finishLbl: "Завершить", qListTitle: "Список вопросов", resTitle: "Результат", resHome: "Другая тема", 
+                finishLbl: "Завершить", qListTitle: "Вопросы", resTitle: "Результат", resHome: "Другая тема", 
                 resRestart: "Пройти снова", teacherLabel: "ПАНЕЛЬ УЧИТЕЛЯ", teacherMaintitle: "Тесты и результаты", 
-                btnCreateTab: "Создать тест", btnResTab: "Результаты", btnQrTab: "Показать QR", btnRetStud: "Назад к ученику", 
-                createTitle: "Создайте свой тест", aiTeachTitle: "Создание с ИИ", lblTestName: "Название теста", lblTestCat: "Категория", 
-                btnAddQ: "Добавить вопрос", btnPublish: "Сохранить и опубликовать", resTitle2: "Результаты учеников", 
-                thName: "Имя / Почта", thTopic: "Тема Теста", thDate: "Дата", thScore: "Счет", loaderTitle: "ИИ анализирует...", 
-                authTitle: "Регистрация", authSubm: "Сохранить и Начать", pinTitle: "PIN код Учителя", pinSubm: "Войти", 
-                qrTitle: "QR Код для Учеников", setLangTitle: "Язык системы", setLangDesc: "Выберите основной язык интерфейса:",
-                setThemeTitle: "Ночной режим (Dark Mode)", setThemeDesc: "Включите темный интерфейс для снижения нагрузки на глаза.", 
-                setTimeTitle: "Настройка времени", setTimeDesc: "Выберите стандартное время на каждый тест:", 
-                setApiTitle: "Системные API ключи (Учитель)", setApiDesc: "Сохраните ключ Gemini здесь для работы ИИ.",
-                setDelTitle: "Очистка данных", setDelDesc: "Удалить все сохраненные тесты и результаты в этом браузере.", btnSaveKey: "Сохранить", btnDel: "Полностью удалить",
-                aiGenBtn: "Создать с ИИ"
+                btnCreateTab: "Создать тест", btnResTab: "Результаты", btnQrTab: "Показать QR", btnRetStud: "К ученику", 
+                createTitle: "Создайте тест", aiTeachTitle: "Создание с ИИ", lblTestName: "Название", lblTestCat: "Категория", 
+                btnAddQ: "Добавить вопрос", btnPublish: "Опубликовать", resTitle2: "Результаты", 
+                thName: "Имя / Почта", thTopic: "Тема", thDate: "Дата", thScore: "Счет", loaderTitle: "ИИ анализирует...", 
+                authTitle: "Регистрация", authSubm: "Начать", pinTitle: "PIN код Учителя", pinSubm: "Войти", 
+                qrTitle: "QR Код", setLangTitle: "Язык", setThemeTitle: "Ночной режим", setTimeTitle: "Время", 
+                setApiTitle: "API Ключ", btnSaveKey: "Сохранить", btnDel: "Удалить все", aiGenBtn: "Создать с ИИ"
             },
             en: { 
                 login: "Sign In", logout: "Logout", teacherPanel: "Teacher", heroTag: "Food for thought", title1: "Stay curious.", 
                 title2: "Play with knowledge.", subtitle: "A collection of 30 great quizzes.", startBtn: "Start", 
                 genBtn: "Generate", aiTitle: "AI Generator", aiDesc: "Enter topic, AI will create questions", moodLbl: "CATEGORIES", 
-                sectionTitle: "30 Quizzes", fAll: "All quizzes", fScience: "Science", fCulture: "Culture", fHistory: "History", 
+                sectionTitle: "30 Quizzes", fAll: "All", fScience: "Science", fCulture: "Culture", fHistory: "History", 
                 fProg: "IT", historyTitle: "Quiz History", hintBtn: "AI Hint", backLbl: "Back", nextLbl: "Next", 
-                finishLbl: "Finish", qListTitle: "Questions List", resTitle: "Quiz Result", resHome: "Other topic", 
+                finishLbl: "Finish", qListTitle: "Questions", resTitle: "Result", resHome: "Other topic", 
                 resRestart: "Retry", teacherLabel: "TEACHER PANEL", teacherMaintitle: "Quizzes & Results", btnCreateTab: "Create Quiz", 
-                btnResTab: "Results", btnQrTab: "Show QR", btnRetStud: "Back to Student", createTitle: "Create Your Quiz", 
-                aiTeachTitle: "Create with AI", lblTestName: "Quiz Title", lblTestCat: "Category", btnAddQ: "Add Question", 
-                btnPublish: "Save & Publish", resTitle2: "Student Results", thName: "Name / Email", thTopic: "Quiz Topic", 
-                thDate: "Date", thScore: "Score", loaderTitle: "AI is analyzing...", authTitle: "Register", authSubm: "Save & Start", 
-                pinTitle: "Teacher PIN", pinSubm: "Enter", qrTitle: "QR Code for Students", setLangTitle: "System Language", 
-                setLangDesc: "Choose the main interface language:", setThemeTitle: "Dark Mode", setThemeDesc: "Enable dark interface to reduce eye strain.", 
-                setTimeTitle: "Adjust Timer", setTimeDesc: "Select the standard time for each quiz:", 
-                setApiTitle: "System API Keys (Teacher)", setApiDesc: "Save the Gemini key here to enable AI features.",
-                setDelTitle: "Clear Data", setDelDesc: "Delete all saved quizzes and results in this browser.", btnSaveKey: "Save", btnDel: "Delete All",
+                btnResTab: "Results", btnQrTab: "Show QR", btnRetStud: "Back to Student", createTitle: "Create Quiz", 
+                aiTeachTitle: "Create with AI", lblTestName: "Title", lblTestCat: "Category", btnAddQ: "Add Question", 
+                btnPublish: "Publish", resTitle2: "Student Results", thName: "Name / Email", thTopic: "Topic", 
+                thDate: "Date", thScore: "Score", loaderTitle: "AI is working...", authTitle: "Register", authSubm: "Start", 
+                pinTitle: "Teacher PIN", pinSubm: "Enter", qrTitle: "QR Code", setLangTitle: "Language", 
+                setThemeTitle: "Dark Mode", setTimeTitle: "Timer", setApiTitle: "API Key", btnSaveKey: "Save", btnDel: "Delete All",
                 aiGenBtn: "Generate AI"
             }
         };
@@ -470,16 +467,13 @@
         // БАПТАУЛАРДЫ ЖҮКТЕУ (LocalStorage)
         try {
             const savedSettings = JSON.parse(localStorage.getItem('quizly_settings'));
-            if(savedSettings) {
-                window.appSettings = { ...window.appSettings, ...savedSettings };
-            }
+            if(savedSettings) { window.appSettings = { ...window.appSettings, ...savedSettings }; }
             firebaseTeacherQuizzes = JSON.parse(localStorage.getItem('local_quizzes') || '[]');
             firebaseStudentResults = JSON.parse(localStorage.getItem('local_results') || '[]');
             window.currentUserName = localStorage.getItem('quizly_user_name') || '';
             window.currentUserEmail = localStorage.getItem('quizly_user_email') || '';
             window.isLoggedIn = !!window.currentUserName;
             
-            // Интерфейске баптауларды қолдану
             if(window.appSettings.theme === 'dark') {
                 document.body.classList.add('dark-mode');
                 document.getElementById('theme-toggle').checked = true;
@@ -489,18 +483,49 @@
             }
         } catch(e) {}
 
+        // Разнообразные вопросы для статических тестов
+        const sampleQuestions = {
+            science: [
+                { q: "Күн жүйесіндегі ең үлкен планета?", options: ["Марс", "Юпитер", "Сатурн", "Жер"], answer: 1 },
+                { q: "Жарық жылдамдығы шамамен қанша?", options: ["300,000 км/с", "150,000 км/с", "1,000,000 км/с", "30,000 км/с"], answer: 0 },
+                { q: "Судың химиялық формуласы?", options: ["CO2", "H2O2", "H2O", "O2"], answer: 2 },
+                { q: "Адам денесіндегі ең үлкен орган?", options: ["Бауыр", "Жүрек", "Тері", "Ми"], answer: 2 }
+            ],
+            history: [
+                { q: "Қазақ хандығы қашан құрылды?", options: ["1465", "1550", "1300", "1700"], answer: 0 },
+                { q: "Американы кім ашты?", options: ["Васко да Гама", "Христофор Колумб", "Магеллан", "Марко Поло"], answer: 1 },
+                { q: "Екінші дүниежүзілік соғыс қашан аяқталды?", options: ["1941", "1945", "1950", "1939"], answer: 1 },
+                { q: "Ежелгі Мысыр билеушілері қалай аталды?", options: ["Патша", "Фараон", "Сұлтан", "Император"], answer: 1 }
+            ],
+            culture: [
+                { q: 'Мона Лизаны кім салған?', options: ["Винсент ван Гог", "Пабло Пикассо", "Леонардо да Винчи", "Микеланджело"], answer: 2 },
+                { q: "Оскар сыйлығы қай салада беріледі?", options: ["Музыка", "Спорт", "Киноиндустрия", "Әдебиет"], answer: 2 },
+                { q: 'Абай Құнанбайұлының әйгілі шығармасы?', options: ["Қыз Жібек", "Қара сөздер", "Менің атым Қожа", "Көшпенділер"], answer: 1 },
+                { q: "Әлемдегі ең көп сөйлейтін тіл?", options: ["Ағылшын", "Қытай", "Испан", "Араб"], answer: 0 }
+            ],
+            programming: [
+                { q: "HTML нені білдіреді?", options: ["Hyper Text Markup Language", "High Tech Modern Language", "Hyperlinks and Text", "Home Tool Markup"], answer: 0 },
+                { q: "Tailwind CSS қандай фреймворк?", options: ["JavaScript", "Python", "Utility-first CSS", "Database"], answer: 2 },
+                { q: "Python тілінде функция қалай құрылады?", options: ["function myFunc()", "def myFunc():", "create myFunc()", "void myFunc()"], answer: 1 },
+                { q: "Веб-беттің стилін не басқарады?", options: ["HTML", "JavaScript", "PHP", "CSS"], answer: 3 }
+            ]
+        };
+
         const STATIC_TOPICS = Array.from({length: 30}, (_, i) => {
             const categories = ['science', 'culture', 'history', 'programming'];
             const cat = categories[i % categories.length];
+            // Берем 3 случайных вопроса из категории для теста
+            const shuffled = sampleQuestions[cat].sort(() => 0.5 - Math.random());
+            const selectedQ = shuffled.slice(0, 3);
+            
             return {
                 id: `q_${i+1}`, category: cat, badge: "Стандартты Тест",
                 title: { kk: `Викторина №${i+1}`, ru: `Квиз №${i+1}`, en: `Quiz #${i+1}` },
-                desc: { kk: "Біліміңізді тексеріңіз.", ru: "Проверьте знания.", en: "Test knowledge." },
-                questions: [ { q: "Бірінші сұрақ?", options: ["А", "В", "С", "Д"], answer: 0, hint: "А нұсқасын таңдаңыз" } ]
+                questions: selectedQ.length > 0 ? selectedQ : [ { q: "Тест сұрағы?", options: ["А", "В", "С", "Д"], answer: 0 } ]
             };
         });
 
-        // UI & FUNCTIONS
+        // UI & ФУНКЦИЯЛАР
         window.showToast = function(msg, isError = false) {
             const toast = document.getElementById('toast');
             document.getElementById('toast-message').textContent = msg;
@@ -509,9 +534,12 @@
             setTimeout(() => { toast.classList.remove('translate-y-0', 'opacity-100'); toast.classList.add('-translate-y-20', 'opacity-0'); }, 3000);
         };
 
+        window.scrollToTopics = function() {
+            document.getElementById('topics-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        };
+
         window.changeLanguage = function(lang) {
             window.currentLang = lang;
-            
             document.querySelectorAll('.lang-btn').forEach(btn => {
                 btn.classList.remove('bg-indigo-600', 'text-white');
                 btn.classList.add('bg-white', 'text-slate-700', 'dark:bg-[#1e1e1e]', 'dark:text-slate-300');
@@ -521,58 +549,41 @@
                 activeBtn.classList.remove('bg-white', 'text-slate-700', 'dark:bg-[#1e1e1e]', 'dark:text-slate-300');
                 activeBtn.classList.add('bg-indigo-600', 'text-white');
             }
-            
             const t = TRANSLATIONS[lang] || TRANSLATIONS.kk;
             const setTxt = (id, txt) => { if(document.getElementById(id)) document.getElementById(id).innerHTML = txt; };
             
             setTxt('ui-login-btn', window.isLoggedIn ? `👤 ${window.currentUserName}` : t.login);
             setTxt('ui-logout-btn', t.logout); setTxt('ui-teacher-panel-btn', t.teacherPanel); 
             setTxt('ui-hero-tag', t.heroTag); setTxt('ui-title-line1', t.title1); setTxt('ui-title-line2', t.title2);
-            setTxt('ui-subtitle', t.subtitle); setTxt('ui-btn-start', t.startBtn); setTxt('ui-ai-gen-title', t.aiTitle); 
-            setTxt('ui-ai-gen-desc', t.aiDesc); setTxt('ui-btn-gen', t.genBtn); setTxt('ui-mood-lbl', t.moodLbl); 
+            setTxt('ui-subtitle', t.subtitle); setTxt('ui-btn-start', `<i class="fa-solid fa-play text-xs"></i> ${t.startBtn}`); 
+            setTxt('ui-ai-gen-title', t.aiTitle); setTxt('ui-ai-gen-desc', t.aiDesc); 
+            setTxt('ui-btn-gen', t.genBtn); setTxt('ui-mood-lbl', t.moodLbl); 
             setTxt('ui-section-topics', t.sectionTitle); setTxt('f-all', t.fAll); setTxt('f-science', t.fScience); 
             setTxt('f-culture', t.fCulture); setTxt('f-history', t.fHistory); setTxt('f-prog', t.fProg); 
             if(document.getElementById('ui-history-title')) document.getElementById('ui-history-title').innerHTML = `<i class="fa-solid fa-clock-rotate-left text-indigo-600"></i> ${t.historyTitle}`;
-            setTxt('ui-hint-btn', t.hintBtn); setTxt('ui-btn-prev', t.backLbl); setTxt('ui-btn-next', t.nextLbl); 
-            setTxt('ui-finish-btn', t.finishLbl); setTxt('ui-questions-list', t.qListTitle); setTxt('ui-result-title', t.resTitle); 
-            setTxt('ui-back-btn', t.resHome); setTxt('ui-restart-btn', t.resRestart); setTxt('ui-teacher-label', t.teacherLabel); 
-            setTxt('ui-teacher-maintitle', t.teacherMaintitle); setTxt('ui-btn-create-tab', t.btnCreateTab); 
-            setTxt('ui-btn-res-tab', t.btnResTab); setTxt('ui-btn-qr-tab', t.btnQrTab); setTxt('ui-btn-return-student', t.btnRetStud); 
-            setTxt('ui-create-title', t.createTitle); setTxt('ui-teacher-ai-title', t.aiTeachTitle); 
-            setTxt('ui-lbl-test-name', t.lblTestName); setTxt('ui-lbl-test-cat', t.lblTestCat); setTxt('ui-btn-add-q', t.btnAddQ); 
-            setTxt('ui-btn-publish', t.btnPublish); setTxt('ui-res-title2', t.resTitle2); setTxt('ui-th-name', t.thName); 
-            setTxt('ui-th-topic', t.thTopic); setTxt('ui-th-date', t.thDate); setTxt('ui-th-score', t.thScore);
-            setTxt('ui-loader-title', t.loaderTitle); setTxt('ui-auth-title', t.authTitle); setTxt('ui-auth-submit', t.authSubm); 
-            setTxt('ui-pin-title', t.pinTitle); setTxt('ui-pin-submit', t.pinSubm); setTxt('ui-qr-title', t.qrTitle);
-            
-            setTxt('ui-set-lang-title', `<i class="fa-solid fa-globe text-blue-500"></i> ${t.setLangTitle}`);
-            setTxt('ui-set-lang-desc', t.setLangDesc);
-            setTxt('ui-set-theme-title', `<i class="fa-solid fa-moon text-indigo-500"></i> ${t.setThemeTitle}`);
-            setTxt('ui-set-theme-desc', t.setThemeDesc);
-            setTxt('ui-set-time-title', `<i class="fa-solid fa-stopwatch text-amber-500"></i> ${t.setTimeTitle}`);
-            setTxt('ui-set-time-desc', t.setTimeDesc);
-            setTxt('ui-set-api-title', `<i class="fa-solid fa-key text-emerald-500"></i> ${t.setApiTitle}`);
-            setTxt('ui-set-api-desc', t.setApiDesc);
-            setTxt('ui-set-del-title', t.setDelTitle);
-            setTxt('ui-set-del-desc', t.setDelDesc);
-            setTxt('ui-btn-save-key', t.btnSaveKey);
-            setTxt('ui-btn-del', t.btnDel);
+            setTxt('ui-hint-btn', `<i class="fa-regular fa-lightbulb"></i> ${t.hintBtn}`); setTxt('ui-btn-prev', t.backLbl); 
+            setTxt('ui-btn-next', t.nextLbl); setTxt('ui-finish-btn', t.finishLbl); setTxt('ui-questions-list', t.qListTitle); 
+            setTxt('ui-result-title', t.resTitle); setTxt('ui-back-btn', t.resHome); setTxt('ui-restart-btn', t.resRestart); 
+            setTxt('ui-teacher-label', t.teacherLabel); setTxt('ui-teacher-maintitle', t.teacherMaintitle); 
+            setTxt('ui-btn-create-tab', t.btnCreateTab); setTxt('ui-btn-res-tab', t.btnResTab); setTxt('ui-btn-qr-tab', t.btnQrTab); 
+            setTxt('ui-btn-return-student', t.btnRetStud); setTxt('ui-create-title', t.createTitle); 
+            setTxt('ui-teacher-ai-title', t.aiTeachTitle); setTxt('ui-lbl-test-name', t.lblTestName); 
+            setTxt('ui-lbl-test-cat', t.lblTestCat); setTxt('ui-btn-add-q', t.btnAddQ); setTxt('ui-btn-publish', t.btnPublish); 
+            setTxt('ui-res-title2', t.resTitle2); setTxt('ui-th-name', t.thName); setTxt('ui-th-topic', t.thTopic); 
+            setTxt('ui-th-date', t.thDate); setTxt('ui-th-score', t.thScore); setTxt('ui-loader-title', t.loaderTitle); 
+            setTxt('ui-auth-title', t.authTitle); setTxt('ui-auth-submit', t.authSubm); setTxt('ui-pin-title', t.pinTitle); 
+            setTxt('ui-pin-submit', t.pinSubm); setTxt('ui-qr-title', t.qrTitle); setTxt('ui-set-lang-title', t.setLangTitle);
+            setTxt('ui-set-theme-title', t.setThemeTitle); setTxt('ui-set-time-title', t.setTimeTitle); setTxt('ui-set-api-title', t.setApiTitle);
+            setTxt('ui-btn-save-key', t.btnSaveKey); setTxt('ui-btn-del', t.btnDel);
             setTxt('ui-btn-ai-gen', `<i class="fa-solid fa-robot"></i> ${t.aiGenBtn}`);
-            
-            setTxt('opt-sci', t.fScience); setTxt('opt-cul', t.fCulture); setTxt('opt-his', t.fHistory); setTxt('opt-pro', t.fProg);
             
             renderTopics();
         };
 
         window.toggleTheme = function() {
             const isDark = document.getElementById('theme-toggle').checked;
-            if(isDark) {
-                document.body.classList.add('dark-mode');
-                window.appSettings.theme = 'dark';
-            } else {
-                document.body.classList.remove('dark-mode');
-                window.appSettings.theme = 'light';
-            }
+            if(isDark) { document.body.classList.add('dark-mode'); window.appSettings.theme = 'dark'; } 
+            else { document.body.classList.remove('dark-mode'); window.appSettings.theme = 'light'; }
             saveSettings();
         };
 
@@ -601,20 +612,14 @@
 
         window.clearAllData = function() {
             if(confirm("Барлық тесттер мен нәтижелерді өшіргіңіз келе ме? Бұл әрекетті қайтара алмайсыз.")) {
-                localStorage.removeItem('local_quizzes');
-                localStorage.removeItem('local_results');
-                firebaseTeacherQuizzes = [];
-                firebaseStudentResults = [];
-                renderTopics();
-                renderHistory();
-                renderStudentResults();
+                localStorage.removeItem('local_quizzes'); localStorage.removeItem('local_results');
+                firebaseTeacherQuizzes = []; firebaseStudentResults = [];
+                renderTopics(); renderHistory(); renderStudentResults();
                 window.showToast("Деректер толық тазаланды!");
             }
         };
 
-        function saveSettings() {
-            try { localStorage.setItem('quizly_settings', JSON.stringify(window.appSettings)); } catch(e){}
-        }
+        function saveSettings() { try { localStorage.setItem('quizly_settings', JSON.stringify(window.appSettings)); } catch(e){} }
 
         window.switchView = function(viewName) {
             ['topics', 'quiz', 'teacher', 'results', 'settings'].forEach(v => {
@@ -660,6 +665,7 @@
                 window.showToast("Оқытушы режимі іске қосылды!"); window.switchRole('teacher');
             } else window.showToast("Құпия код кемі 3 таңба!", true);
         };
+        
         window.switchTeacherTab = function(tab) {
             if (tab === 'create') {
                 document.getElementById('teacher-tab-create').classList.remove('hidden');
@@ -671,6 +677,7 @@
                 renderStudentResults();
             }
         };
+
         window.addTeacherQuestion = function() {
             const list = document.getElementById('teacher-questions-list');
             const qIdx = list.children.length + 1;
@@ -692,6 +699,7 @@
             `;
             list.appendChild(card);
         };
+        
         window.saveTeacherQuiz = function() {
             const title = document.getElementById('teacher-quiz-title').value.trim();
             if (!title) { window.showToast("Тест атауын жазыңыз!", true); return; }
@@ -721,6 +729,7 @@
             if (ev) ev.target.classList.add('active');
             renderTopics();
         };
+
         function renderTopics() {
             const grid = document.getElementById('topics-grid');
             if (!grid) return;
@@ -750,14 +759,17 @@
         function startQuiz(quizObj) {
             if (!window.isLoggedIn) { window.openAuthModal(); return; }
             window.currentQuiz = quizObj; window.currentQuestionIdx = 0; window.userAnswers = new Array(quizObj.questions.length).fill(null);
+            document.getElementById('hint-container').classList.add('hidden');
             window.switchView('quiz'); startTimer(window.appSettings.defaultTimer); renderQuestion();
         }
+
         function renderQuestion() {
             const q = window.currentQuiz.questions[window.currentQuestionIdx];
             const total = window.currentQuiz.questions.length;
             document.getElementById('question-index-text').textContent = `Сұрақ ${window.currentQuestionIdx + 1} / ${total}`;
             document.getElementById('question-text').textContent = q.q;
             document.getElementById('progress-bar').style.width = `${((window.currentQuestionIdx + 1) / total) * 100}%`;
+            document.getElementById('hint-container').classList.add('hidden'); // Скрываем подсказку при переходе
             
             const container = document.getElementById('options-container');
             container.innerHTML = '';
@@ -771,10 +783,12 @@
             });
             
             document.getElementById('btn-prev').disabled = window.currentQuestionIdx === 0;
-            document.getElementById('ui-btn-next').textContent = window.currentQuestionIdx === total - 1 ? TRANSLATIONS[window.currentLang].finishLbl : TRANSLATIONS[window.currentLang].nextLbl;
+            document.getElementById('ui-btn-next').innerHTML = window.currentQuestionIdx === total - 1 ? `<span id="ui-btn-next">${TRANSLATIONS[window.currentLang].finishLbl}</span> <i class="fa-solid fa-check"></i>` : `<span id="ui-btn-next">${TRANSLATIONS[window.currentLang].nextLbl}</span> <i class="fa-solid fa-arrow-right"></i>`;
         }
+
         window.prevQuestion = () => { if (window.currentQuestionIdx > 0) { window.currentQuestionIdx--; renderQuestion(); } };
         window.nextQuestion = () => { if (window.currentQuestionIdx < window.currentQuiz.questions.length - 1) { window.currentQuestionIdx++; renderQuestion(); } else window.finishQuiz(); };
+        window.restartQuiz = () => { startQuiz(window.currentQuiz); };
         
         function startTimer(seconds) {
             clearInterval(window.timerInterval); window.timerSeconds = seconds;
@@ -795,6 +809,25 @@
             document.getElementById('score-percent').textContent = `${percent}%`;
             document.getElementById('score-text').textContent = `${score} / ${total}`;
             document.getElementById('result-topic-title').textContent = window.currentQuiz.title;
+            
+            // Разбор ошибок (Review)
+            const reviewList = document.getElementById('review-list');
+            reviewList.innerHTML = `<h3 class="font-bold text-xl mb-6 text-slate-800 dark:text-slate-200">Қателермен жұмыс</h3>`;
+            
+            window.currentQuiz.questions.forEach((q, i) => {
+                const uAns = window.userAnswers[i];
+                const isCorrect = uAns === q.answer;
+                const ansBlock = document.createElement('div');
+                ansBlock.className = `p-4 mb-4 rounded-xl border text-left ${isCorrect ? 'bg-emerald-50/50 border-emerald-200 dark:bg-emerald-900/20' : 'bg-rose-50/50 border-rose-200 dark:bg-rose-900/20'}`;
+                ansBlock.innerHTML = `
+                    <div class="font-bold text-sm mb-3 text-slate-900 dark:text-slate-100">${i+1}. ${q.q}</div>
+                    <div class="text-sm space-y-1">
+                        <div class="text-slate-600 dark:text-slate-400">Сіздің жауабыңыз: <span class="font-bold ${isCorrect ? 'text-emerald-600' : 'text-rose-600'}">${uAns !== null ? q.options[uAns] : 'Жауап берілмеді'}</span></div>
+                        ${!isCorrect ? `<div class="text-slate-600 dark:text-slate-400">Дұрыс жауап: <span class="font-bold text-emerald-600">${q.options[q.answer]}</span></div>` : ''}
+                    </div>
+                `;
+                reviewList.appendChild(ansBlock);
+            });
             
             const rec = { studentName: window.currentUserName, studentEmail: window.currentUserEmail, title: window.currentQuiz.title, score, total, percent, date: new Date().toLocaleDateString() };
             firebaseStudentResults.unshift(rec);
@@ -828,51 +861,107 @@
             `).join('');
         }
         
-        // ОҚЫТУШЫ AI ФУНКЦИЯСЫ (GEMINI API) - ЖАҢАРТЫЛҒАН
+        // --- AI ФУНКЦИЯЛАР (GEMINI 1.5 FLASH) ---
+
+        // 1. Студентке арналған көмекші (Hint)
+        window.getAIHint = async function() {
+            let apiKey = window.appSettings.apiKey || document.getElementById('settings-api-key').value.trim();
+            if(!apiKey) { window.showToast("Баптаулардан API кілтін енгізіңіз!", true); return; }
+
+            const hintBtn = document.getElementById('ui-hint-btn');
+            const originalHTML = hintBtn.innerHTML;
+            hintBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Күту...';
+            hintBtn.disabled = true;
+
+            const q = window.currentQuiz.questions[window.currentQuestionIdx].q;
+            const langStr = window.currentLang === 'ru' ? 'Russian' : window.currentLang === 'en' ? 'English' : 'Kazakh';
+            const prompt = `Give a very short, 1-sentence hint for this quiz question without directly revealing the correct answer. Question: "${q}". Language: ${langStr}`;
+
+            try {
+                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+                });
+                const data = await res.json();
+                if(data.error) throw new Error(data.error.message);
+                
+                const hintText = data.candidates[0].content.parts[0].text;
+                const hintContainer = document.getElementById('hint-container');
+                hintContainer.textContent = hintText;
+                hintContainer.classList.remove('hidden');
+            } catch(e) {
+                window.showToast("AI қатесі. Кілтті тексеріңіз.", true);
+            } finally {
+                hintBtn.innerHTML = originalHTML;
+                hintBtn.disabled = false;
+            }
+        };
+
+        // 2. Студенттің AI Тақырып Генераторы (Басты беттен)
+        window.generateAITopic = async function() {
+            const topic = document.getElementById('custom-topic-input').value.trim();
+            let apiKey = window.appSettings.apiKey || document.getElementById('settings-api-key').value.trim();
+            
+            if(!apiKey) { window.showToast("Баптаулардан API кілтін енгізіңіз!", true); return; }
+            if(!topic) { window.showToast("Тақырыпты енгізіңіз!", true); return; }
+
+            const btn = document.getElementById('btn-generate-ai');
+            const originalHTML = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> ...';
+            btn.disabled = true;
+
+            const langStr = window.currentLang === 'kk' ? 'Қазақ тілінде' : window.currentLang === 'ru' ? 'на Русском языке' : 'in English';
+            const prompt = `Topic: "${topic}". Create exactly 5 multiple choice quiz questions ${langStr}. Return ONLY valid JSON in this exact format, no extra text, no markdown blocks: {"questions": [{"q": "Question?", "options": ["A", "B", "C", "D"], "answer": 0}]}`;
+
+            try {
+                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }], generationConfig: { responseMimeType: "application/json" } })
+                });
+                const data = await res.json();
+                if (data.error) throw new Error(data.error.message);
+                
+                const rawText = data.candidates[0].content.parts[0].text;
+                const quizData = JSON.parse(rawText);
+                
+                startQuiz({ title: topic, badge: "AI Генерация", category: 'ai', questions: quizData.questions });
+                document.getElementById('custom-topic-input').value = '';
+                window.showToast("AI тестті сәтті құрастырды!");
+            } catch(e) {
+                console.error(e);
+                window.showToast("Генерация қатесі. Басқа тақырып көріңіз.", true);
+            } finally {
+                btn.innerHTML = originalHTML;
+                btn.disabled = false;
+            }
+        };
+
+        // 3. Мұғалімнің AI Генераторы
         window.generateTeacherQuizWithAI = async function() {
             const topic = document.getElementById('teacher-ai-topic').value.trim();
-            
-            // Баптаулардан немесе input өрісінен API кілтін алу
-            let apiKey = window.appSettings.apiKey;
-            if(!apiKey) {
-                const settingsInput = document.getElementById('settings-api-key');
-                if(settingsInput) apiKey = settingsInput.value.trim();
-            }
+            let apiKey = window.appSettings.apiKey || document.getElementById('settings-api-key').value.trim();
 
-            if(!apiKey) { 
-                window.showToast("Баптаулар бөліміне кіріп Gemini API кілтін енгізіңіз!", true); 
-                return; 
-            }
-            if(!topic) { 
-                window.showToast("Тақырыпты жазыңыз!", true); 
-                return; 
-            }
+            if(!apiKey) { window.showToast("Баптаулардан API кілтін енгізіңіз!", true); return; }
+            if(!topic) { window.showToast("Тақырыпты жазыңыз!", true); return; }
             
             document.getElementById('ai-loading-overlay').classList.remove('hidden'); 
             document.getElementById('ai-loading-overlay').classList.add('flex');
 
+            const langStr = window.currentLang === 'kk' ? 'Қазақ тілінде' : window.currentLang === 'ru' ? 'на Русском языке' : 'in English';
+
             try {
-                // Дұрыс жұмыс істейтін модель URL мекенжайы (gemini-1.5-flash)
                 const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
-                    method: 'POST', 
-                    headers: { 'Content-Type': 'application/json' },
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ 
-                        contents: [{ 
-                            parts: [{ text: `Тақырып: "${topic}". Осыған Қазақ тілінде дәл 3 сұрақтан тұратын тест құрастыр. Жауапты тек мына JSON форматында ғана қайтар, басқа ешқандай мәтін жазба: {"questions": [{"q": "Сұрақ?", "options": ["А", "В", "С", "Д"], "answer": 0}]}` }] 
-                        }], 
+                        contents: [{ parts: [{ text: `Тақырып: "${topic}". Осыған ${langStr} дәл 5 сұрақтан тұратын тест құрастыр. Жауапты тек мына JSON форматында ғана қайтар: {"questions": [{"q": "Сұрақ?", "options": ["А", "В", "С", "Д"], "answer": 0}]}` }] }], 
                         generationConfig: { responseMimeType: "application/json" } 
                     })
                 });
 
                 const data = await res.json();
-                
-                if (data.error) {
-                    throw new Error(data.error.message || "API қатесі орын алды");
-                }
+                if (data.error) throw new Error();
 
-                const rawText = data.candidates[0].content.parts[0].text;
-                const quizData = JSON.parse(rawText);
-                
+                const quizData = JSON.parse(data.candidates[0].content.parts[0].text);
                 const list = document.getElementById('teacher-questions-list'); 
                 list.innerHTML = '';
                 
@@ -896,8 +985,7 @@
                 document.getElementById('teacher-quiz-title').value = topic;
                 window.showToast("AI сұрақтарды сәтті құрастырды!");
             } catch(e) { 
-                console.error(e);
-                window.showToast("Генерация қатесі: API кілтін немесе интернет байланысын тексеріңіз.", true); 
+                window.showToast("Генерация қатесі. Қайта көріңіз.", true); 
             } finally { 
                 document.getElementById('ai-loading-overlay').classList.add('hidden'); 
                 document.getElementById('ai-loading-overlay').classList.remove('flex'); 
